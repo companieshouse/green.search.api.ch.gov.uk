@@ -11,10 +11,10 @@ class AlphabeticalSearchQueriesTest {
     AlphabeticalSearchQueries alphabeticalSearchQueries = new AlphabeticalSearchQueries();
 
     @Test
-    @DisplayName("Create Ordered AlphaKey Search Query")
-    void createOrderedAlphaKeySearchQuery() {
-        QueryBuilder queryBuilder =
-            alphabeticalSearchQueries.createOrderedAlphaKeySearchQuery("orderAlphakey");
+        @DisplayName("Create Ordered AlphaKey Search Query")
+        void createOrderedAlphaKeySearchQuery() {
+            QueryBuilder queryBuilder =
+                    alphabeticalSearchQueries.createOrderedAlphaKeySearchQuery("orderAlphakey");
 
         assertNotNull(queryBuilder);
     }
