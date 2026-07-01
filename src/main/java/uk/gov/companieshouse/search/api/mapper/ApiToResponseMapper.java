@@ -34,12 +34,12 @@ public class ApiToResponseMapper {
             case REQUEST_PARAMETER_ERROR -> ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body("Invalid url parameter for search_type, " +
                             "please try 'alphabetical', 'best-match' or 'previous-name-dissolved'");
-            case SIZE_PARAMETER_ERROR -> ResponseEntity.status(UNPROCESSABLE_ENTITY)
+            case SIZE_PARAMETER_ERROR -> ResponseEntity.status(UNPROCESSABLE_CONTENT)
                     .body("Invalid size parameter, size must be greater than zero and not greater than "
                             + environmentReader.getMandatoryInteger(MAX_SIZE_PARAM));
             case SERVICE_UNAVAILABLE -> ResponseEntity.status(SERVICE_UNAVAILABLE)
                     .body("API attempted to call an unavailable service");
-            case ADVANCED_SIZE_PARAMETER_ERROR -> ResponseEntity.status(UNPROCESSABLE_ENTITY)
+            case ADVANCED_SIZE_PARAMETER_ERROR -> ResponseEntity.status(UNPROCESSABLE_CONTENT)
                     .body("Invalid size parameter, size must be greater than zero and not greater than "
                             + environmentReader.getMandatoryInteger(ADVANCED_SEARCH_MAX_SIZE));
             default -> ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
