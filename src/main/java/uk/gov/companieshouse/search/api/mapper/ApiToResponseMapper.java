@@ -1,0 +1,48 @@
+package uk.gov.companieshouse.search.api.mapper;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.environment.EnvironmentReader;
+import uk.gov.companieshouse.search.api.model.response.ResponseObject;
+
+import static org.springframework.http.HttpStatus.*;
+
+@Component
+public class ApiToResponseMapper {
+
+    private final EnvironmentReader environmentReader;
+    private static final String MAX_SIZE_PARAM = "MAX_SIZE_PARAM";
+    private static final String ADVANCED_SEARCH_MAX_SIZE = "ADVANCED_SEARCH_MAX_SIZE";
+
+    public ApiToResponseMapper(EnvironmentReader environmentReader) {
+        this.environmentReader = environmentReader;
+    }
+
+    public <T> ResponseEntity<Object> map(ResponseObject<T> responseObject) {
+
+        return switch (responseObject.getStatus()) {
+            case SEARCH_FOUND, DOCUMENT_UPSERTED, DOCUMENT_DELETED ->
+                    ResponseEntity.status(OK).body(responseObject.getData());
+            case SEARCH_NOT_FOUND, DELETE_NOT_FOUND -> ResponseEntity.status(NOT_FOUND).build();
+            case UPDATE_REQUEST_ERROR, UPSERT_ERROR, DELETE_REQUEST_ERROR -> ResponseEntity.status(BAD_REQUEST).build();
+            case DATE_FORMAT_ERROR -> ResponseEntity.status(BAD_REQUEST)
+                    .body("Date provided is either invalid, empty or in the incorrect format, " +
+                            "please use the format of 'yyyy-mm-dd' e.g '2000-12-20'");
+            case MAPPING_ERROR -> ResponseEntity.status(BAD_REQUEST)
+                    .body("Error attempting to map request parameter values, please check the values of fields " +
+                            "'company_status' or 'company_type' or 'company_subtype' contain accurate values");
+            case REQUEST_PARAMETER_ERROR -> ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body("Invalid url parameter for search_type, " +
+                            "please try 'alphabetical', 'best-match' or 'previous-name-dissolved'");
+            case SIZE_PARAMETER_ERROR -> ResponseEntity.status(UNPROCESSABLE_ENTITY)
+                    .body("Invalid size parameter, size must be greater than zero and not greater than "
+                            + environmentReader.getMandatoryInteger(MAX_SIZE_PARAM));
+            case SERVICE_UNAVAILABLE -> ResponseEntity.status(SERVICE_UNAVAILABLE)
+                    .body("API attempted to call an unavailable service");
+            case ADVANCED_SIZE_PARAMETER_ERROR -> ResponseEntity.status(UNPROCESSABLE_ENTITY)
+                    .body("Invalid size parameter, size must be greater than zero and not greater than "
+                            + environmentReader.getMandatoryInteger(ADVANCED_SEARCH_MAX_SIZE));
+            default -> ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
+        };
+    }
+}
