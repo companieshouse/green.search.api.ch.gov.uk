@@ -8,6 +8,10 @@ public class ResponseObject<T> {
     private ResponseStatus status;
     private SearchResults<T> searchResults;
 
+    public ResponseObject(ResponseStatus status) {
+        this.status = status;
+    }
+
     public ResponseObject(ResponseStatus status, SearchResults<T> searchResults) {
         this.status = status;
         this.searchResults = searchResults;
