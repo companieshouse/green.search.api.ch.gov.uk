@@ -1,7 +1,7 @@
 package uk.gov.companieshouse.search.api.service.search.impl.alphabetical;
 
 import org.springframework.stereotype.Service;
-import uk.gov.companieshouse.search.api.model.esdatamodel.Company;
+import uk.gov.companieshouse.search.api.model.data.Company;
 import uk.gov.companieshouse.search.api.model.response.ResponseObject;
 import uk.gov.companieshouse.search.api.model.response.ResponseStatus;
 import uk.gov.companieshouse.search.api.service.search.SearchIndexService;

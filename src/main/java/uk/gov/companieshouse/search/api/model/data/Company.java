@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.search.api.model.esdatamodel;
+package uk.gov.companieshouse.search.api.model.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -31,7 +31,7 @@ public class Company {
 
     @JsonProperty("kind")
     private String kind;
-    
+
     @JsonProperty("record_type")
     private String recordType;
 

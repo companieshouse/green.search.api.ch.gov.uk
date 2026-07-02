@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.search.api.service.search;
 
-import uk.gov.companieshouse.search.api.model.esdatamodel.Company;
+import uk.gov.companieshouse.search.api.model.data.Company;
 import uk.gov.companieshouse.search.api.model.response.ResponseObject;
 
 public interface SearchIndexService {
