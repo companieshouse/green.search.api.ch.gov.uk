@@ -121,51 +121,51 @@ public class AlphabeticalSearchRequestService implements SearchRequestService<Co
     }
 
     private List<Company> prepareSearchResultsWithTopHit(Integer size, String requestId, Map<String, Object> logMap,
-            TopHit topHitCompany, List<Company> results, String orderedAlphakeyWithId, Company company)
+            TopHit topHitCompany, List<Company> results, String orderedAlphaKeyWithId, Company company)
             throws IOException {
         checkSize(size);
-        logMap.put(ORDERED_ALPHAKEY_WITH_ID, orderedAlphakeyWithId);
+        logMap.put(ORDERED_ALPHAKEY_WITH_ID, orderedAlphaKeyWithId);
         getLogger().info("Default alphabetical search before and after tophit", logMap);
         if (sizeAbove > 0) {
-            results = populateAboveResults(requestId, topHitCompany.getCompanyName(), orderedAlphakeyWithId,
+            results = populateAboveResults(requestId, topHitCompany.getCompanyName(), orderedAlphaKeyWithId,
                     sizeAbove);
         }
         results.add(company);
         if (sizeBelow > 0) {
             results.addAll(populateBelowResults(requestId, topHitCompany.getCompanyName(),
-                    orderedAlphakeyWithId, sizeBelow));
+                    orderedAlphaKeyWithId, sizeBelow));
         }
         return results;
     }
 
-    public HitsMetadata<Object> peelBackSearchRequest(HitsMetadata<Object> hits, String orderedAlphakey, String requestId)
+    public HitsMetadata<Object> peelBackSearchRequest(HitsMetadata<Object> hits, String orderedAlphaKey, String requestId)
             throws IOException {
 
         Integer fallbackQueryLimit = environmentReader.getMandatoryInteger(ALPHABETICAL_FALLBACK_QUERY_LIMIT);
 
-        for (int i = 0; i < orderedAlphakey.length(); i++) {
+        for (int i = 0; i < orderedAlphaKey.length(); i++) {
             TotalHits totalHits = hits.total();
                 if ((totalHits != null && totalHits.value() > 0) || i == fallbackQueryLimit) {
                     return hits;
                 }
 
-            if (i != orderedAlphakey.length() - 1) {
-                String resultString = orderedAlphakey.substring(0, orderedAlphakey.length() - i);
+            if (i != orderedAlphaKey.length() - 1) {
+                String resultString = orderedAlphaKey.substring(0, orderedAlphaKey.length() - i);
                 hits = getSearchHits(resultString, requestId);
             }
         }
         return hits;
     }
 
-    private HitsMetadata<Object> getSearchHits(String orderedAlphakey, String requestId) throws IOException {
-        HitsMetadata<Object> hits = alphabeticalSearchRequests.getBestMatchResponse(orderedAlphakey, requestId);
+    private HitsMetadata<Object> getSearchHits(String orderedAlphaKey, String requestId) throws IOException {
+        HitsMetadata<Object> hits = alphabeticalSearchRequests.getBestMatchResponse(orderedAlphaKey, requestId);
 
         if (hits.total() != null && hits.total().value() == 0) {
-            hits = alphabeticalSearchRequests.getStartsWithResponse(orderedAlphakey, requestId);
+            hits = alphabeticalSearchRequests.getStartsWithResponse(orderedAlphaKey, requestId);
         }
 
         if (hits.total() != null && hits.total().value() == 0) {
-            hits = alphabeticalSearchRequests.getCorporateNameStartsWithResponse(orderedAlphakey, requestId);
+            hits = alphabeticalSearchRequests.getCorporateNameStartsWithResponse(orderedAlphaKey, requestId);
         }
         return hits;
     }
@@ -173,18 +173,17 @@ public class AlphabeticalSearchRequestService implements SearchRequestService<Co
     /**
      * method to populate the entries following the ordered alphakey
      *
-     * @param requestId
-     * @param topHitCompanyName
-     * @param orderedAlphakeyWithId
-     * @param size
+     * @param requestId the request identifier used for tracking and logging
+     * @param topHitCompanyName the company name associated with the current result
+     * @param orderedAlphaKeyWithId the ordered alpha key and company identifier
+     * @param size the maximum number of results to retrieve
      * @return the list of company objects returned from ES
-     * @throws IOException
      */
-    private List<Company> populateBelowResults(String requestId, String topHitCompanyName, String orderedAlphakeyWithId,
+    private List<Company> populateBelowResults(String requestId, String topHitCompanyName, String orderedAlphaKeyWithId,
             Integer size) throws IOException {
         List<Company> results = new ArrayList<>();
         HitsMetadata<Object> hits;
-        hits = alphabeticalSearchRequests.getDescendingResultsResponse(requestId, orderedAlphakeyWithId,
+        hits = alphabeticalSearchRequests.getDescendingResultsResponse(requestId, orderedAlphaKeyWithId,
                 topHitCompanyName, size);
         hits.hits().forEach(h -> results.add(openSearchResponseMapper.mapAlphabeticalResponse(h)));
         return results;
@@ -196,17 +195,17 @@ public class AlphabeticalSearchRequestService implements SearchRequestService<Co
      *
      * @param requestId the request identifier used for tracking and logging
      * @param topHitCompanyName the company name associated with the current result
-     * @param orderedAlphakeyWithId the ordered alpha key and company identifier
+     * @param orderedAlphaKeyWithId the ordered alpha key and company identifier
      * @param size the maximum number of results to retrieve
      * @return a list of companies that appear before the supplied ordered alpha key
      * @throws IOException if an error occurs while querying OpenSearch
      */
 
-    private List<Company> populateAboveResults(String requestId, String topHitCompanyName, String orderedAlphakeyWithId,
+    private List<Company> populateAboveResults(String requestId, String topHitCompanyName, String orderedAlphaKeyWithId,
             Integer size) throws IOException {
         List<Company> results = new ArrayList<>();
         HitsMetadata<Object> hits;
-        hits = alphabeticalSearchRequests.getAboveResultsResponse(requestId, orderedAlphakeyWithId, topHitCompanyName,
+        hits = alphabeticalSearchRequests.getAboveResultsResponse(requestId, orderedAlphaKeyWithId, topHitCompanyName,
                 size);
         hits.hits().forEach(h -> results.add(openSearchResponseMapper.mapAlphabeticalResponse(h)));
 
@@ -215,7 +214,6 @@ public class AlphabeticalSearchRequestService implements SearchRequestService<Co
     }
 
     private String getOrderedAlphaKeyWithId(Hit<Object> hit) {
-        // TODO
         Map<String, Object> sourceAsMap = (Map<String, Object>) hit.source();
         return (String) sourceAsMap.get(ORDERED_ALPHA_KEY_WITH_ID);
     }
