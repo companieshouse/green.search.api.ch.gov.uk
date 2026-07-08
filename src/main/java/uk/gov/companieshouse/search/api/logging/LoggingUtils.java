@@ -9,6 +9,9 @@ public class LoggingUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(APPLICATION_NAME_SPACE);
 
+    public static final String MESSAGE = "message";
+    public static final String ORDERED_ALPHAKEY = "ordered_alphakey";
+    public static final String ORDERED_ALPHAKEY_WITH_ID = "ordered_alphakey_with_id";
 
     private LoggingUtils() throws IllegalAccessException {
         throw new IllegalAccessException("LoggingUtils is not to be instantiated");
