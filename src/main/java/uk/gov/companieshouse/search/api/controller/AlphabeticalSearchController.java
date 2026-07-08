@@ -63,17 +63,17 @@ public class AlphabeticalSearchController {
         getLogger().info("Search request received", logMap);
 
         try {
-            size = SearchRequestUtils.checkResultsSize
-                (size, environmentReader.getMandatoryInteger(ALPHABETICAL_SEARCH_RESULT_MAX),
+            size = SearchRequestUtils
+                    .checkResultsSize(size, environmentReader.getMandatoryInteger(ALPHABETICAL_SEARCH_RESULT_MAX),
                     environmentReader.getMandatoryInteger(MAX_SIZE_PARAM));
         } catch (SizeException e) {
             getLogger().info(e.getMessage(), logMap);
             return apiToResponseMapper
-                .map(new ResponseObject<String>(ResponseStatus.SIZE_PARAMETER_ERROR, null));
+                    .map(new ResponseObject<String>(ResponseStatus.SIZE_PARAMETER_ERROR, null));
         }
 
         ResponseObject<?> responseObject = searchIndexService
-            .search(companyName, searchBefore, searchAfter, size, requestId);
+                .search(companyName, searchBefore, searchAfter, size, requestId);
 
         return apiToResponseMapper.map(responseObject);
     }

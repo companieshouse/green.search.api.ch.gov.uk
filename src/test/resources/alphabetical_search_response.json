@@ -1,0 +1,13 @@
+{
+  "ID": "id",
+  "company_type": "ltd",
+  "ordered_alpha_key_with_id": "ordered_alpha_key_with_id",
+  "items": {
+    "company_number": "00000000",
+    "company_status": "active",
+    "corporate_name": "TEST COMPANY"
+  },
+  "links": {
+    "self": "/company/00000000"
+  }
+}
