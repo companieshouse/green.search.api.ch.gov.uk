@@ -21,6 +21,7 @@
 		<environment-reader-library.version>3.0.5</environment-reader-library.version>
 		<api-sdk-java.version>7.0.5</api-sdk-java.version>
 		<opensearch-java-client.version>3.9.0</opensearch-java-client.version>
+		<maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
 		<start-class>uk.gov.companieshouse.search.api.SearchApiApplication</start-class>
 	</properties>
 
@@ -82,6 +83,11 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
