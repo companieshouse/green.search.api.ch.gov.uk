@@ -17,7 +17,6 @@ import uk.gov.companieshouse.search.api.service.search.SearchIndexService;
 import uk.gov.companieshouse.search.api.util.ConfiguredIndexNamesProvider;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -55,8 +54,8 @@ class AlphabeticalSearchControllerTest {
         Mockito.when(environmentReader.getMandatoryInteger("MAX_SIZE_PARAM"))
                 .thenReturn(100);
 
-        Mockito.when(searchIndexService.search(eq("test company"), eq(null), eq(null), eq(10),
-                        eq("request-id")))
+        Mockito.when(searchIndexService.search("test company", null, null, 10,
+                        "request-id"))
                 .thenReturn(responseObject);
 
         Mockito.when(apiToResponseMapper.map(any()))

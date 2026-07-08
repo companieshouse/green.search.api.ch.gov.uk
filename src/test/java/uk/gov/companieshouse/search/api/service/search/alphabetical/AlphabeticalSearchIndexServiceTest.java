@@ -35,14 +35,14 @@ class AlphabeticalSearchIndexServiceTest {
     @Mock
     private ConfiguredIndexNamesProvider indices;
 
-    private static TopHit TOP_HIT;
+    private static TopHit topHit;
     private static final String REQUEST_ID = "requestId";
     private static final String CORPORATE_NAME = "corporateName";
 
     @BeforeEach
     void setUp() {
-        TOP_HIT = new TopHit();
-        TOP_HIT.setCompanyName("AAAA COMMUNICATIONS LIMITED");
+        topHit = new TopHit();
+        topHit.setCompanyName("AAAA COMMUNICATIONS LIMITED");
     }
 
     @Test
@@ -96,7 +96,7 @@ class AlphabeticalSearchIndexServiceTest {
         searchResults.setKind("alphabetical");
 
         if (!isItemsEmpty) {
-            searchResults.setTopHit(TOP_HIT);
+            searchResults.setTopHit(topHit);
 
             if (isResultsPopulated) {
                 searchResults.setItems(createResults());

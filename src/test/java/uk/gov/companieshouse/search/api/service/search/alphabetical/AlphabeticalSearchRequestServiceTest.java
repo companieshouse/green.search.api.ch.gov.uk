@@ -226,7 +226,7 @@ class AlphabeticalSearchRequestServiceTest {
 
     @Test
     @DisplayName("Test search request returns results successfully when search_before is not null")
-    void testSearchUsinfSearchBefore() throws Exception {
+    void testSearchUsingSearchBefore() throws Exception {
 
         when(mockAlphaKeyService.getAlphaKeyForCorporateName(CORPORATE_NAME)).thenReturn(createAlphaKeyResponse());
 
@@ -252,7 +252,7 @@ class AlphabeticalSearchRequestServiceTest {
 
     @Test
     @DisplayName("Test search request returns results successfully when search_after is not null")
-    void testSearchUsinfSearchAfter() throws Exception {
+    void testSearchUsingSearchAfter() throws Exception {
 
         when(mockAlphaKeyService.getAlphaKeyForCorporateName(CORPORATE_NAME)).thenReturn(createAlphaKeyResponse());
 
@@ -308,12 +308,9 @@ class AlphabeticalSearchRequestServiceTest {
 
     private HitsMetadata<Object> createSearchHits() throws IOException, URISyntaxException {
 
-        String ALPHABETICAL_RESPONSE_FILENAME = "alphabetical_search_response.json";
-        String alphabeticResponseJson = readFile(ALPHABETICAL_RESPONSE_FILENAME);
+        String alphabeticResponseJson = readFile("alphabetical_search_response.json");
 
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        Map<String, Object> source = objectMapper.readValue(alphabeticResponseJson, new TypeReference<>() {
+        Map<String, Object> source = new ObjectMapper().readValue(alphabeticResponseJson, new TypeReference<>() {
         });
 
         Hit<Object> hit = Hit.of(h -> h

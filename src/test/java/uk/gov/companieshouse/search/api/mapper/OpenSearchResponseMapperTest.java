@@ -45,9 +45,9 @@ class OpenSearchResponseMapperTest {
     @DisplayName("Map alphabetical response successful")
     void mapAlphabeticalResponseTest() throws IOException, URISyntaxException {
 
-        String ALPHABETICAL_RESPONSE_FILENAME = "alphabetical_search_response.json";
-        String ALPHABETICAL_RESPONSE = readFile(ALPHABETICAL_RESPONSE_FILENAME);
-        HitsMetadata<Object> searchHits = createHits(ALPHABETICAL_RESPONSE);
+        String alphabeticalResponseJsonFile = "alphabetical_search_response.json";
+        String alphabeticalSearchJsonResponse = readFile(alphabeticalResponseJsonFile);
+        HitsMetadata<Object> searchHits = createHits(alphabeticalSearchJsonResponse);
 
         Company company =
                 mapper.mapAlphabeticalResponse(searchHits.hits().getFirst());
