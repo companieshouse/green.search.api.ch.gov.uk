@@ -74,7 +74,6 @@ public abstract class AbstractSearchRequest {
                 .build().getLogMap();
         LoggingUtils.getLogger().info("Searching the OpenSearch cluster using orderedAlphaKey", logMap);
 
-
         // Consider using corporateName instead of orderedAlphakey
         // Currently using same logic as python application
         SearchRequest searchRequest = bestMatchSourceBuilder(
@@ -82,7 +81,6 @@ public abstract class AbstractSearchRequest {
         );
 
         SearchRequest searchRequestCorporateName = createBaseOpenSearchRequest(searchRequest, requestId);
-
 
         SearchResponse<Object> searchResponse = getRestClientService().search(searchRequestCorporateName);
         return searchResponse.hits();
@@ -99,7 +97,6 @@ public abstract class AbstractSearchRequest {
                 .size(String.valueOf(size))
                 .build().getLogMap();
         LoggingUtils.getLogger().info("Retrieving the alphabetically descending results from OpenSearch cluster", logMap);
-
 
         SearchRequest searchRequest = alphabeticalSearchRequest(orderedAlphakeyWithId,
                 getSearchQuery().createMatchAllQuery(), SortOrder.Desc, size);
@@ -139,7 +136,6 @@ public abstract class AbstractSearchRequest {
                 .build();
     }
 
-
     private SearchRequest bestMatchSourceBuilder(Query query) {
 
         int size = Integer.parseInt(environmentReader.getMandatoryString(getResultsSize()));
@@ -157,7 +153,7 @@ public abstract class AbstractSearchRequest {
     }
 
     public SearchRequest alphabeticalSearchRequest(
-            String orderedAlphakeyWithId,
+            String orderedAlphaKeyWithId,
             Query query,
             SortOrder sortOrder,
             Integer size) {
@@ -169,14 +165,13 @@ public abstract class AbstractSearchRequest {
         return new SearchRequest.Builder()
                 .size(finalSize)
                 .query(query)
-                .searchAfter(FieldValue.of(orderedAlphakeyWithId))
-                .sort(s -> s
-                        .field(f -> f
+                .searchAfter(FieldValue.of(orderedAlphaKeyWithId))
+                .sort(sb -> sb
+                        .field(fb -> fb
                                 .field(ORDERED_ALPHA_KEY_WITH_ID)
                                 .order(sortOrder)
                         )
                 )
                 .build();
     }
-
 }

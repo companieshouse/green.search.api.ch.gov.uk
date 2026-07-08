@@ -21,7 +21,6 @@ public class OpenSearchResponseMapper {
     private static final String ORDERED_ALPHA_KEY_WITH_ID = "ordered_alpha_key_with_id";
     protected static final String SEARCH_RESULTS_ALPHABETICAL_KIND = "searchresults#alphabetical-search";
 
-
     public TopHit mapAlphabeticalTopHit(Company company) {
         TopHit topHit = new TopHit();
 
@@ -57,5 +56,4 @@ public class OpenSearchResponseMapper {
 
         return company;
     }
-
 }

@@ -26,7 +26,7 @@ import java.util.Map;
 import static uk.gov.companieshouse.search.api.logging.LoggingUtils.*;
 import static uk.gov.companieshouse.search.api.logging.LoggingUtils.ORDERED_ALPHAKEY;
 
-@Service("alphabeticalOpenSearchRequestService")
+@Service
 public class AlphabeticalSearchRequestService implements SearchRequestService<Company> {
 
     private final AlphaKeyService alphaKeyService;

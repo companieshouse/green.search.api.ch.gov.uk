@@ -1,7 +1,8 @@
 package uk.gov.companieshouse.search.api.service.rest;
 
 import org.opensearch.client.opensearch.OpenSearchClient;
-import org.opensearch.client.opensearch.core.*;
+import org.opensearch.client.opensearch.core.SearchRequest;
+import org.opensearch.client.opensearch.core.SearchResponse;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
