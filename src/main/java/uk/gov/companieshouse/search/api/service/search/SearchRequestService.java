@@ -7,7 +7,7 @@ public interface SearchRequestService<T> {
 
     /**
      * Returns alphabetical search results for a company
-     * @param searchParam   - param to search elastic search database
+     * @param searchParam   - param to search OpenSearch database
      * @param searchBefore  - param to search previous results
      * @param searchAfter   - param to search following results
      * @param size          - param to limit the number of results
