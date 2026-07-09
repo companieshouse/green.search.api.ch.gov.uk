@@ -1,18 +1,15 @@
-package uk.gov.companieshouse.search.api.model;
+package uk.gov.companieshouse.search.api.model.esdatamodel;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.gov.companieshouse.search.api.model.esdatamodel.Address;
-import uk.gov.companieshouse.search.api.model.esdatamodel.Links;
-import uk.gov.companieshouse.search.api.model.esdatamodel.PreviousCompanyName;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TopHit {
+public class Company {
 
     @JsonProperty("company_name")
     private String companyName;
@@ -34,7 +31,7 @@ public class TopHit {
 
     @JsonProperty("kind")
     private String kind;
-
+    
     @JsonProperty("record_type")
     private String recordType;
 
@@ -87,16 +84,16 @@ public class TopHit {
         return companyType;
     }
 
+    public void setCompanyType(String companyType) {
+        this.companyType = companyType;
+    }
+
     public String getCompanySubtype() {
         return companySubtype;
     }
 
     public void setCompanySubtype(String companySubtype) {
         this.companySubtype = companySubtype;
-    }
-
-    public void setCompanyType(String companyType) {
-        this.companyType = companyType;
     }
 
     public String getOrderedAlphaKeyWithId() {
