@@ -1,10 +1,10 @@
-package uk.gov.companieshouse.search.api.elasticsearch;
+package uk.gov.companieshouse.search.api.opensearch;
 
 import org.springframework.stereotype.Component;
 
 import uk.gov.companieshouse.environment.EnvironmentReader;
 import uk.gov.companieshouse.search.api.service.rest.RestClientService;
-import uk.gov.companieshouse.search.api.service.rest.impl.AlphabeticalSearchRestClientService;
+import uk.gov.companieshouse.search.api.service.rest.AlphabeticalSearchRestClientService;
 
 @Component
 public class AlphabeticalSearchRequests extends AbstractSearchRequest {
@@ -29,17 +29,17 @@ public class AlphabeticalSearchRequests extends AbstractSearchRequest {
     String getIndex() {
         return INDEX;
     }
-    
+
     @Override
     String getResultsSize() {
         return RESULTS_SIZE;
     }
-    
+
     @Override
     RestClientService getRestClientService() {
         return searchRestClient;
     }
-    
+
     @Override
     AbstractSearchQuery getSearchQuery() {
         return alphabeticalSearchQueries;

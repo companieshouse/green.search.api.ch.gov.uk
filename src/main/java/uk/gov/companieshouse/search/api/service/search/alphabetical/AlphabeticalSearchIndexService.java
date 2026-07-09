@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.search.api.service.search.impl.alphabetical;
+package uk.gov.companieshouse.search.api.service.search.alphabetical;
 
 import static uk.gov.companieshouse.search.api.logging.LoggingUtils.getLogger;
 
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.logging.util.DataMap;
 import uk.gov.companieshouse.search.api.exception.SearchException;
 import uk.gov.companieshouse.search.api.model.SearchResults;
-import uk.gov.companieshouse.search.api.model.esdatamodel.Company;
+import uk.gov.companieshouse.search.api.model.data.Company;
 import uk.gov.companieshouse.search.api.model.response.ResponseObject;
 import uk.gov.companieshouse.search.api.model.response.ResponseStatus;
 import uk.gov.companieshouse.search.api.service.search.SearchIndexService;

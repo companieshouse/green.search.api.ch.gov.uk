@@ -1,27 +1,19 @@
 package uk.gov.companieshouse.search.api.service.rest;
 
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.action.update.UpdateResponse;
+
+import org.opensearch.client.opensearch.core.SearchRequest;
+import org.opensearch.client.opensearch.core.SearchResponse;
 
 import java.io.IOException;
 
 public interface RestClientService {
 
     /**
-     * interface for elastic search high level rest client used for search
+     * interface for Open search high level rest client used for search
      *
      * @param searchRequest - searchRequest containing search parameters
-     * @return SearchResponse - response from elastic search db
+     * @return SearchResponse - response from Open search db
      */
-    SearchResponse search(SearchRequest searchRequest) throws IOException;
+    SearchResponse<Object> search(SearchRequest searchRequest) throws IOException;
 
-    /**
-     * interface for elastic search high level rest client used in upsert
-     *
-     * @param updateRequest - updateRequest containing update parameters
-     * @return UpdateResponse - response from elastic search db
-     */
-    UpdateResponse upsert(UpdateRequest updateRequest) throws IOException;
 }

@@ -1,7 +1,5 @@
 package uk.gov.companieshouse.search.api.service.search.alphabetical;
 
-import static org.apache.lucene.search.TotalHits.Relation.EQUAL_TO;
-import static org.apache.lucene.search.TotalHits.Relation.GREATER_THAN_OR_EQUAL_TO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -9,28 +7,37 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import org.apache.lucene.search.TotalHits;
-import org.elasticsearch.common.bytes.BytesArray;
-import org.elasticsearch.common.bytes.BytesReference;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.opensearch.client.opensearch.core.search.Hit;
+import org.opensearch.client.opensearch.core.search.HitsMetadata;
+import org.opensearch.client.opensearch.core.search.TotalHits;
+import org.opensearch.client.opensearch.core.search.TotalHitsRelation;
 import uk.gov.companieshouse.environment.EnvironmentReader;
-import uk.gov.companieshouse.search.api.elasticsearch.AlphabeticalSearchRequests;
+import uk.gov.companieshouse.search.api.opensearch.AlphabeticalSearchRequests;
 import uk.gov.companieshouse.search.api.exception.SearchException;
-import uk.gov.companieshouse.search.api.mapper.ElasticSearchResponseMapper;
+import uk.gov.companieshouse.search.api.mapper.OpenSearchResponseMapper;
 import uk.gov.companieshouse.search.api.model.SearchResults;
 import uk.gov.companieshouse.search.api.model.TopHit;
-import uk.gov.companieshouse.search.api.model.esdatamodel.Company;
-import uk.gov.companieshouse.search.api.model.esdatamodel.Links;
+import uk.gov.companieshouse.search.api.model.data.Company;
+import uk.gov.companieshouse.search.api.model.data.Links;
 import uk.gov.companieshouse.search.api.model.response.AlphaKeyResponse;
 import uk.gov.companieshouse.search.api.service.AlphaKeyService;
-import uk.gov.companieshouse.search.api.service.search.impl.alphabetical.AlphabeticalSearchRequestService;
 import uk.gov.companieshouse.search.api.util.ConfiguredIndexNamesProvider;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,7 +53,7 @@ class AlphabeticalSearchRequestServiceTest {
     private AlphabeticalSearchRequests mockAlphabeticalSearchRequests;
 
     @Mock
-    private ElasticSearchResponseMapper mockElasticSearchResponseMapper;
+    private OpenSearchResponseMapper mockOpenSearchResponseMapper;
 
     @Mock
     private EnvironmentReader mockEnvironmentReader;
@@ -77,9 +84,9 @@ class AlphabeticalSearchRequestServiceTest {
 
         Company company = createCompany();
 
-        when(mockElasticSearchResponseMapper.mapAlphabeticalResponse(createSearchHits().getAt(0))).thenReturn(company);
+        when(mockOpenSearchResponseMapper.mapAlphabeticalResponse(createSearchHits().hits().getFirst())).thenReturn(company);
 
-        when(mockElasticSearchResponseMapper.mapAlphabeticalTopHit(company)).thenReturn(createTopHit());
+        when(mockOpenSearchResponseMapper.mapAlphabeticalTopHit(company)).thenReturn(createTopHit());
 
         when(mockAlphabeticalSearchRequests.getBestMatchResponse(ORDERED_ALPHA_KEY, REQUEST_ID))
                 .thenReturn(createSearchHits());
@@ -91,13 +98,14 @@ class AlphabeticalSearchRequestServiceTest {
                 9)).thenReturn(createSearchHits());
 
         SearchResults<Company> searchResults =
-            searchRequestService.getAlphabeticalSearchResults(CORPORATE_NAME, null, null, 20, REQUEST_ID);
+                searchRequestService.getAlphabeticalSearchResults(CORPORATE_NAME, null, null, 20, REQUEST_ID);
 
         assertNotNull(searchResults);
-        assertEquals( TOP_HIT, searchResults.getTopHit().getCompanyName());
+        assertEquals(TOP_HIT, searchResults.getTopHit().getCompanyName());
         assertEquals(3, searchResults.getItems().size());
     }
-    
+
+
     @Test
     @DisplayName("Test search request returns results successfully with best match query and a size of 1")
     void testBestMatchSuccessfulWithSizeOne() throws Exception {
@@ -106,18 +114,18 @@ class AlphabeticalSearchRequestServiceTest {
 
         Company company = createCompany();
 
-        when(mockElasticSearchResponseMapper.mapAlphabeticalResponse(createSearchHits().getAt(0))).thenReturn(company);
+        when(mockOpenSearchResponseMapper.mapAlphabeticalResponse(createSearchHits().hits().getFirst())).thenReturn(company);
 
-        when(mockElasticSearchResponseMapper.mapAlphabeticalTopHit(company)).thenReturn(createTopHit());
+        when(mockOpenSearchResponseMapper.mapAlphabeticalTopHit(company)).thenReturn(createTopHit());
 
         when(mockAlphabeticalSearchRequests.getBestMatchResponse(ORDERED_ALPHA_KEY, REQUEST_ID))
                 .thenReturn(createSearchHits());
 
         SearchResults<Company> searchResults =
-            searchRequestService.getAlphabeticalSearchResults(CORPORATE_NAME, null, null, 1, REQUEST_ID);
+                searchRequestService.getAlphabeticalSearchResults(CORPORATE_NAME, null, null, 1, REQUEST_ID);
 
         assertNotNull(searchResults);
-        assertEquals( TOP_HIT, searchResults.getTopHit().getCompanyName());
+        assertEquals(TOP_HIT, searchResults.getTopHit().getCompanyName());
         assertEquals(1, searchResults.getItems().size());
     }
 
@@ -129,9 +137,9 @@ class AlphabeticalSearchRequestServiceTest {
 
         Company company = createCompany();
 
-        when(mockElasticSearchResponseMapper.mapAlphabeticalResponse(createSearchHits().getAt(0))).thenReturn(company);
+        when(mockOpenSearchResponseMapper.mapAlphabeticalResponse(createSearchHits().hits().getFirst())).thenReturn(company);
 
-        when(mockElasticSearchResponseMapper.mapAlphabeticalTopHit(company)).thenReturn(createTopHit());
+        when(mockOpenSearchResponseMapper.mapAlphabeticalTopHit(company)).thenReturn(createTopHit());
 
         when(mockAlphabeticalSearchRequests.getBestMatchResponse(ORDERED_ALPHA_KEY, REQUEST_ID))
                 .thenReturn(createEmptySearchHits());
@@ -146,7 +154,7 @@ class AlphabeticalSearchRequestServiceTest {
                 9)).thenReturn(createSearchHits());
 
         SearchResults<Company> searchResults =
-            searchRequestService.getAlphabeticalSearchResults(CORPORATE_NAME, null, null, 20, REQUEST_ID);
+                searchRequestService.getAlphabeticalSearchResults(CORPORATE_NAME, null, null, 20, REQUEST_ID);
 
         assertNotNull(searchResults);
         assertEquals(TOP_HIT, searchResults.getTopHit().getCompanyName());
@@ -161,9 +169,9 @@ class AlphabeticalSearchRequestServiceTest {
 
         Company company = createCompany();
 
-        when(mockElasticSearchResponseMapper.mapAlphabeticalResponse(createSearchHits().getAt(0))).thenReturn(company);
+        when(mockOpenSearchResponseMapper.mapAlphabeticalResponse(createSearchHits().hits().getFirst())).thenReturn(company);
 
-        when(mockElasticSearchResponseMapper.mapAlphabeticalTopHit(company)).thenReturn(createTopHit());
+        when(mockOpenSearchResponseMapper.mapAlphabeticalTopHit(company)).thenReturn(createTopHit());
 
         when(mockAlphabeticalSearchRequests.getBestMatchResponse(ORDERED_ALPHA_KEY, REQUEST_ID))
                 .thenReturn(createEmptySearchHits());
@@ -181,7 +189,7 @@ class AlphabeticalSearchRequestServiceTest {
                 5)).thenReturn(createSearchHits());
 
         SearchResults<Company> searchResults =
-            searchRequestService.getAlphabeticalSearchResults(CORPORATE_NAME, null, null, 11, REQUEST_ID);
+                searchRequestService.getAlphabeticalSearchResults(CORPORATE_NAME, null, null, 11, REQUEST_ID);
 
         assertNotNull(searchResults);
         assertEquals(TOP_HIT, searchResults.getTopHit().getCompanyName());
@@ -202,30 +210,31 @@ class AlphabeticalSearchRequestServiceTest {
     }
 
     @Test
-    @DisplayName("Test peelbackSearchRequest successful")
-    void testPeelbackSearchRequestSuccessful() throws Exception {
+    @DisplayName("Test peelBackSearchRequest successful")
+    void testPeelBackSearchRequestSuccessful() throws Exception {
 
         when(mockAlphabeticalSearchRequests.getBestMatchResponse(ORDERED_ALPHA_KEY, REQUEST_ID))
                 .thenReturn(createSearchHits());
         doReturn(25).when(mockEnvironmentReader).getMandatoryInteger(ALPHABETICAL_FALLBACK_QUERY_LIMIT);
 
-        SearchHits searchHits = searchRequestService.peelbackSearchRequest(createEmptySearchHits(), ORDERED_ALPHA_KEY,
+        HitsMetadata<Object> searchHits = searchRequestService.peelBackSearchRequest(createEmptySearchHits(), ORDERED_ALPHA_KEY,
                 REQUEST_ID);
 
-        assertEquals(1L, searchHits.getTotalHits().value);
+        assert searchHits.total() != null;
+        assertEquals(1L, searchHits.total().value());
     }
 
     @Test
     @DisplayName("Test search request returns results successfully when search_before is not null")
-    void testSearchUsinfSearchBefore() throws Exception {
+    void testSearchUsingSearchBefore() throws Exception {
 
         when(mockAlphaKeyService.getAlphaKeyForCorporateName(CORPORATE_NAME)).thenReturn(createAlphaKeyResponse());
 
         Company company = createCompany();
 
-        when(mockElasticSearchResponseMapper.mapAlphabeticalResponse(createSearchHits().getAt(0))).thenReturn(company);
+        when(mockOpenSearchResponseMapper.mapAlphabeticalResponse(createSearchHits().hits().getFirst())).thenReturn(company);
 
-        when(mockElasticSearchResponseMapper.mapAlphabeticalTopHit(company)).thenReturn(createTopHit());
+        when(mockOpenSearchResponseMapper.mapAlphabeticalTopHit(company)).thenReturn(createTopHit());
 
         when(mockAlphabeticalSearchRequests.getBestMatchResponse(ORDERED_ALPHA_KEY, REQUEST_ID))
                 .thenReturn(createSearchHits());
@@ -243,15 +252,15 @@ class AlphabeticalSearchRequestServiceTest {
 
     @Test
     @DisplayName("Test search request returns results successfully when search_after is not null")
-    void testSearchUsinfSearchAfter() throws Exception {
+    void testSearchUsingSearchAfter() throws Exception {
 
         when(mockAlphaKeyService.getAlphaKeyForCorporateName(CORPORATE_NAME)).thenReturn(createAlphaKeyResponse());
 
         Company company = createCompany();
 
-        when(mockElasticSearchResponseMapper.mapAlphabeticalResponse(createSearchHits().getAt(0))).thenReturn(company);
+        when(mockOpenSearchResponseMapper.mapAlphabeticalResponse(createSearchHits().hits().getFirst())).thenReturn(company);
 
-        when(mockElasticSearchResponseMapper.mapAlphabeticalTopHit(company)).thenReturn(createTopHit());
+        when(mockOpenSearchResponseMapper.mapAlphabeticalTopHit(company)).thenReturn(createTopHit());
 
         when(mockAlphabeticalSearchRequests.getBestMatchResponse(ORDERED_ALPHA_KEY, REQUEST_ID))
                 .thenReturn(createSearchHits());
@@ -275,9 +284,9 @@ class AlphabeticalSearchRequestServiceTest {
 
         Company company = createCompany();
 
-        when(mockElasticSearchResponseMapper.mapAlphabeticalResponse(createSearchHits().getAt(0))).thenReturn(company);
+        when(mockOpenSearchResponseMapper.mapAlphabeticalResponse(createSearchHits().hits().getFirst())).thenReturn(company);
 
-        when(mockElasticSearchResponseMapper.mapAlphabeticalTopHit(company)).thenReturn(createTopHit());
+        when(mockOpenSearchResponseMapper.mapAlphabeticalTopHit(company)).thenReturn(createTopHit());
 
         when(mockAlphabeticalSearchRequests.getBestMatchResponse(ORDERED_ALPHA_KEY, REQUEST_ID))
                 .thenReturn(createSearchHits());
@@ -296,20 +305,34 @@ class AlphabeticalSearchRequestServiceTest {
         assertEquals(3, searchResults.getItems().size());
     }
 
-    private SearchHits createSearchHits() {
-        BytesReference source = new BytesArray("{" + "\"ID\": \"id\"," + "\"company_type\": \"ltd\","
-                + "\"ordered_alpha_key_with_id\": \"ordered_alpha_key_with_id\"," + "\"items\" : {"
-                + "\"company_number\" : \"00000000\"," + "\"company_status\" : \"active\","
-                + "\"corporate_name\" : \"TEST COMPANY\"" + "}," + "\"links\" : {" + "\"self\" : \"/company/00000000\"" + "}" + "}");
-        SearchHit hit = new SearchHit(1);
-        hit.sourceRef(source);
-        TotalHits totalHits = new TotalHits(1, GREATER_THAN_OR_EQUAL_TO);
-        return new SearchHits(new SearchHit[] { hit }, totalHits, 10);
+
+    private HitsMetadata<Object> createSearchHits() throws IOException, URISyntaxException {
+
+        String alphabeticResponseJson = readFile("alphabetical_search_response.json");
+
+        Map<String, Object> source = new ObjectMapper().readValue(alphabeticResponseJson, new TypeReference<>() {
+        });
+
+        Hit<Object> hit = Hit.of(h -> h
+                .id("1")
+                .source(source));
+
+        return HitsMetadata.of(h -> h
+                .hits(List.of(hit))
+                .maxScore(10.00F)
+                .total(TotalHits.of(t -> t
+                        .value(1)
+                        .relation(TotalHitsRelation.Gte))));
     }
 
-    private SearchHits createEmptySearchHits() {
-        TotalHits totalHits = new TotalHits(0, EQUAL_TO);
-        return new SearchHits(new SearchHit[] {}, totalHits, 0);
+
+    private HitsMetadata<Object> createEmptySearchHits() {
+
+        return HitsMetadata.of(h -> h
+                .hits(Collections.emptyList())
+                .total(t -> t
+                        .value(0)
+                        .relation(TotalHitsRelation.Eq)));
     }
 
     private AlphaKeyResponse createAlphaKeyResponse() {
@@ -349,5 +372,10 @@ class AlphabeticalSearchRequestServiceTest {
         topHit.setLinks(links);
 
         return topHit;
+    }
+
+    private String readFile(String fileName) throws IOException, URISyntaxException {
+        Path path = Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource(fileName)).toURI());
+        return new String(Files.readAllBytes(path));
     }
 }
