@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
-
 @Service
 public class AlphabeticalSearchRestClientService implements RestClientService {
 
@@ -21,5 +20,4 @@ public class AlphabeticalSearchRestClientService implements RestClientService {
     public SearchResponse<Object> search(SearchRequest searchRequest) throws IOException {
         return alphabeticalSearchClient.search(searchRequest, Object.class);
     }
-
 }

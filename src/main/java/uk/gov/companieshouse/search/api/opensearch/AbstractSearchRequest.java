@@ -67,7 +67,6 @@ public abstract class AbstractSearchRequest {
 
     public HitsMetadata<Object> getCorporateNameStartsWithResponse(String orderedAlphakey,
                                                                    String requestId) throws IOException {
-
         Map<String, Object> logMap = new DataMap.Builder()
                 .requestId(requestId)
                 .orderedAlphakey(orderedAlphakey)
@@ -89,7 +88,6 @@ public abstract class AbstractSearchRequest {
     public HitsMetadata<Object> getAboveResultsResponse(String requestId,
                                                         String orderedAlphakeyWithId,
                                                         String topHitCompanyName, Integer size) throws IOException {
-
         Map<String, Object> logMap = new DataMap.Builder()
                 .requestId(requestId)
                 .orderedAlphakeyWithId(orderedAlphakeyWithId)
@@ -110,7 +108,6 @@ public abstract class AbstractSearchRequest {
     public HitsMetadata<Object> getDescendingResultsResponse(String requestId,
                                                              String orderedAlphaKeyWithId,
                                                              String topHitCompanyName, Integer size) throws IOException {
-
         Map<String, Object> logMap = new DataMap.Builder()
                 .requestId(requestId)
                 .orderedAlphakeyWithId(orderedAlphaKeyWithId)
