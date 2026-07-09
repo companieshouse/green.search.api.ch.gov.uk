@@ -13,7 +13,6 @@ public class SearchRequestUtils {
         if (size <= 0 || size > maxSize) {
             throw new SizeException("Size parameter is less than or equal to 0 or greater than maximum");
         }
-
         return size;
     }
 }

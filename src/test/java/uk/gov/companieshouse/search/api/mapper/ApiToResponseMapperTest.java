@@ -220,4 +220,3 @@ class ApiToResponseMapperTest {
         assertEquals(INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
     }
 }
-

@@ -47,10 +47,10 @@ public class AlphabeticalSearchController {
 
     @GetMapping("/companies")
     public ResponseEntity<Object> searchByCorporateName(@RequestParam(name = COMPANY_NAME_QUERY_PARAM) String companyName,
-                                                   @RequestParam(name = SEARCH_BEFORE_PARAM, required = false) String searchBefore,
-                                                   @RequestParam(name = SEARCH_AFTER_PARAM, required = false) String searchAfter,
-                                                   @RequestParam(name = SIZE_PARAM, required = false) Integer size,
-                                                   @RequestHeader(REQUEST_ID_HEADER_NAME) String requestId) {
+                                                        @RequestParam(name = SEARCH_BEFORE_PARAM, required = false) String searchBefore,
+                                                        @RequestParam(name = SEARCH_AFTER_PARAM, required = false) String searchAfter,
+                                                        @RequestParam(name = SIZE_PARAM, required = false) Integer size,
+                                                        @RequestHeader(REQUEST_ID_HEADER_NAME) String requestId) {
 
         Map<String, Object> logMap = new DataMap.Builder()
                 .requestId(requestId)
@@ -63,17 +63,17 @@ public class AlphabeticalSearchController {
         getLogger().info("Search request received", logMap);
 
         try {
-            size = SearchRequestUtils.checkResultsSize
-                (size, environmentReader.getMandatoryInteger(ALPHABETICAL_SEARCH_RESULT_MAX),
-                    environmentReader.getMandatoryInteger(MAX_SIZE_PARAM));
+            size = SearchRequestUtils
+                    .checkResultsSize(size, environmentReader.getMandatoryInteger(ALPHABETICAL_SEARCH_RESULT_MAX),
+                            environmentReader.getMandatoryInteger(MAX_SIZE_PARAM));
         } catch (SizeException e) {
             getLogger().info(e.getMessage(), logMap);
             return apiToResponseMapper
-                .map(new ResponseObject<String>(ResponseStatus.SIZE_PARAMETER_ERROR, null));
+                    .map(new ResponseObject<String>(ResponseStatus.SIZE_PARAMETER_ERROR, null));
         }
 
         ResponseObject<?> responseObject = searchIndexService
-            .search(companyName, searchBefore, searchAfter, size, requestId);
+                .search(companyName, searchBefore, searchAfter, size, requestId);
 
         return apiToResponseMapper.map(responseObject);
     }
