@@ -23,6 +23,14 @@
 		<opensearch-java-client.version>3.9.0</opensearch-java-client.version>
 		<maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
 		<start-class>uk.gov.companieshouse.search.api.SearchApiApplication</start-class>
+
+		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+		<sonar.sources>src/main</sonar.sources>
+		<sonar.tests>src/test</sonar.tests>
+		<sonar.verbose>true</sonar.verbose>
+		<sonar.coverage.jacoco.xmlReportPaths>
+			${project.basedir}/target/site/jacoco/jacoco.xml
+		</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
 
 	<dependencyManagement>
@@ -87,6 +95,16 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven-surefire-plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco-maven-plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>${sonar-maven-plugin.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
