@@ -9,7 +9,7 @@ locals {
   docker_repo               = "green.search.api.ch.gov.uk"
   kms_alias                 = "alias/${var.aws_profile}/environment-services-kms"
   api_kms_alias             = "alias/green-search-${var.environment}" # This is the API KMS Key used by PSC Discrepancies API
-  lb_listener_rule_priority = 37
+  lb_listener_rule_priority = 38
   lb_listener_paths = ["/alphabetical-search/companies",
     "/alphabetical-search/companies/*"
   ]
