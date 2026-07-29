@@ -45,7 +45,8 @@ public class OpenSearchConfig {
             );
         }
 
-        HttpHost httpHost = new HttpHost(endpoint.getHost(), endpoint.getPort());
+        HttpHost httpHost = new HttpHost(endpoint.getProtocol(),  endpoint.getHost(), endpoint.getPort());
+
         ApacheHttpClient5Transport transport = ApacheHttpClient5TransportBuilder
                 .builder(httpHost)
                 .setMapper(new JacksonJsonpMapper())
