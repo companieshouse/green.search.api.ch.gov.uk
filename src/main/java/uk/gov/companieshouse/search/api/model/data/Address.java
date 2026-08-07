@@ -14,6 +14,4 @@ public record Address(
         @JsonProperty("premises") String premises,
         @JsonProperty("region") String region,
         @JsonProperty("country") String country
-) {
-
-}
+) {}
