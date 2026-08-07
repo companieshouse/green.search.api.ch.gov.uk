@@ -63,4 +63,16 @@ class AlphabeticalSearchQueriesTest {
                 () -> assertEquals(corporateName, query.matchPhrasePrefix().query())
         );
     }
+
+    @Test
+    @DisplayName("Should create match all query")
+    void createMatchAllQuery() {
+
+        Query query = queries.createMatchAllQuery();
+
+        assertAll(
+                () -> assertNotNull(query),
+                () -> assertTrue(query.isMatchAll())
+        );
+    }
 }
