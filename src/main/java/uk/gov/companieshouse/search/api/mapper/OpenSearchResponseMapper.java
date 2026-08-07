@@ -41,7 +41,7 @@ public class OpenSearchResponseMapper {
         Map<String, Object> links = (Map<String, Object>) sourceAsMap.get(LINKS_KEY);
 
         Company company = new Company();
-        Links companyLinks = new Links();
+        Links companyLinks = new Links((String) (links.get(SELF_KEY)));
 
         company.setCompanyName((String) (items.get(CORPORATE_NAME_KEY)));
         company.setCompanyNumber((String) (items.get(COMPANY_NUMBER_KEY)));
@@ -49,7 +49,6 @@ public class OpenSearchResponseMapper {
         company.setOrderedAlphaKeyWithId((String) sourceAsMap.get(ORDERED_ALPHA_KEY_WITH_ID));
         company.setKind(SEARCH_RESULTS_ALPHABETICAL_KIND);
 
-        companyLinks.setCompanyProfile((String) (links.get(SELF_KEY)));
         company.setLinks(companyLinks);
 
         company.setCompanyType((String) sourceAsMap.get(COMPANY_TYPE_KEY));

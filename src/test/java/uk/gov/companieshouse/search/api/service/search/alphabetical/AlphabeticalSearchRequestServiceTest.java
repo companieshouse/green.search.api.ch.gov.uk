@@ -351,9 +351,7 @@ class AlphabeticalSearchRequestServiceTest {
         company.setOrderedAlphaKeyWithId(ORDERED_ALPHA_KEY_WITH_ID);
         company.setKind(KIND);
 
-        Links links = new Links();
-        links.setCompanyProfile(COMPANY_PROFILE_LINK);
-        company.setLinks(links);
+        company.setLinks(new Links(COMPANY_PROFILE_LINK));
 
         return company;
     }
@@ -367,9 +365,7 @@ class AlphabeticalSearchRequestServiceTest {
         topHit.setOrderedAlphaKeyWithId(ORDERED_ALPHA_KEY_WITH_ID);
         topHit.setKind(KIND);
 
-        Links links = new Links();
-        links.setCompanyProfile(COMPANY_PROFILE_LINK);
-        topHit.setLinks(links);
+        topHit.setLinks(new Links(COMPANY_PROFILE_LINK));
 
         return topHit;
     }

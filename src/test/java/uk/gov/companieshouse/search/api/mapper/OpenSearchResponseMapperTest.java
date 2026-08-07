@@ -57,7 +57,7 @@ class OpenSearchResponseMapperTest {
         assertEquals(COMPANY_STATUS_ACTIVE, company.getCompanyStatus());
         assertEquals(COMPANY_TYPE, company.getCompanyType());
         assertEquals(ORDERED_ALPHA_KEY_WITH_ID, company.getOrderedAlphaKeyWithId());
-        assertEquals(COMPANY_PROFILE_LINK, company.getLinks().getCompanyProfile());
+        assertEquals(COMPANY_PROFILE_LINK, company.getLinks().companyProfile());
     }
 
     @Test
@@ -71,7 +71,7 @@ class OpenSearchResponseMapperTest {
         assertEquals(COMPANY_STATUS_ACTIVE, topHit.getCompanyStatus());
         assertEquals(COMPANY_TYPE, topHit.getCompanyType());
         assertEquals(ORDERED_ALPHA_KEY_WITH_ID, topHit.getOrderedAlphaKeyWithId());
-        assertEquals(COMPANY_PROFILE_LINK, topHit.getLinks().getCompanyProfile());
+        assertEquals(COMPANY_PROFILE_LINK, topHit.getLinks().companyProfile());
         assertEquals(SEARCH_RESULTS_ALPHABETICAL_KIND, topHit.getKind());
     }
 
@@ -101,9 +101,7 @@ class OpenSearchResponseMapperTest {
         company.setCompanyType(COMPANY_TYPE);
         company.setOrderedAlphaKeyWithId(ORDERED_ALPHA_KEY_WITH_ID);
 
-        Links links = new Links();
-        links.setCompanyProfile(COMPANY_PROFILE_LINK);
-        company.setLinks(links);
+        company.setLinks(new Links(COMPANY_PROFILE_LINK));
 
         return company;
     }
