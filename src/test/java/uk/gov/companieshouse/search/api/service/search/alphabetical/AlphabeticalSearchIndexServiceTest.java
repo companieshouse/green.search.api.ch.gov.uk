@@ -54,7 +54,7 @@ class AlphabeticalSearchIndexServiceTest {
 
         assertNotNull(responseObject);
         assertEquals(ResponseStatus.SEARCH_FOUND, responseObject.getStatus());
-        assertEquals(1, responseObject.getData().getItems().size());
+        assertEquals(1, responseObject.getData().items().size());
     }
 
     @Test
@@ -92,38 +92,30 @@ class AlphabeticalSearchIndexServiceTest {
     }
 
     private SearchResults<Company> createSearchResults(boolean isResultsPopulated, boolean isItemsEmpty) {
-        SearchResults<Company> searchResults = new SearchResults<>();
-        searchResults.setKind("alphabetical");
+        TopHit searchTopHit = null;
+        List<Company> items = null;
 
         if (!isItemsEmpty) {
-            searchResults.setTopHit(topHit);
-
+            searchTopHit = topHit;
             if (isResultsPopulated) {
-                searchResults.setItems(createResults());
+                items = createResults();
             }
-        } else {
-            searchResults.setTopHit(null);
-            searchResults.setItems(null);
         }
-        return searchResults;
+
+        return new SearchResults<>(null, searchTopHit, items, "alphabetical", null);
     }
 
     private List<Company> createResults() {
         List<Company> results = new ArrayList<>();
-        Company company = new Company();
-        Links links = new Links();
-
-        company.setCompanyName("corporateName");
-        company.setCompanyStatus("companyStatus");
-        company.setCompanyNumber("companyNumber");
-        company.setRecordType("recordType");
-
-        links.setCompanyProfile("self");
-
-        company.setCompanyType("companyType");
-        company.setLinks(links);
+        Company company = Company.builder()
+                .companyName("corporateName")
+                .companyNumber("companyNumber")
+                .companyStatus("companyStatus")
+                .companyType("companyType")
+                .recordType("recordType")
+                .links(new Links("self"))
+                .build();
         results.add(company);
-
         return results;
     }
 }

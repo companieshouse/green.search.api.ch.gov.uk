@@ -101,8 +101,8 @@ class AlphabeticalSearchRequestServiceTest {
                 searchRequestService.getAlphabeticalSearchResults(CORPORATE_NAME, null, null, 20, REQUEST_ID);
 
         assertNotNull(searchResults);
-        assertEquals(TOP_HIT, searchResults.getTopHit().getCompanyName());
-        assertEquals(3, searchResults.getItems().size());
+        assertEquals(TOP_HIT, searchResults.topHit().getCompanyName());
+        assertEquals(3, searchResults.items().size());
     }
 
 
@@ -125,8 +125,8 @@ class AlphabeticalSearchRequestServiceTest {
                 searchRequestService.getAlphabeticalSearchResults(CORPORATE_NAME, null, null, 1, REQUEST_ID);
 
         assertNotNull(searchResults);
-        assertEquals(TOP_HIT, searchResults.getTopHit().getCompanyName());
-        assertEquals(1, searchResults.getItems().size());
+        assertEquals(TOP_HIT, searchResults.topHit().getCompanyName());
+        assertEquals(1, searchResults.items().size());
     }
 
     @Test
@@ -157,8 +157,8 @@ class AlphabeticalSearchRequestServiceTest {
                 searchRequestService.getAlphabeticalSearchResults(CORPORATE_NAME, null, null, 20, REQUEST_ID);
 
         assertNotNull(searchResults);
-        assertEquals(TOP_HIT, searchResults.getTopHit().getCompanyName());
-        assertEquals(3, searchResults.getItems().size());
+        assertEquals(TOP_HIT, searchResults.topHit().getCompanyName());
+        assertEquals(3, searchResults.items().size());
     }
 
     @Test
@@ -192,8 +192,8 @@ class AlphabeticalSearchRequestServiceTest {
                 searchRequestService.getAlphabeticalSearchResults(CORPORATE_NAME, null, null, 11, REQUEST_ID);
 
         assertNotNull(searchResults);
-        assertEquals(TOP_HIT, searchResults.getTopHit().getCompanyName());
-        assertEquals(3, searchResults.getItems().size());
+        assertEquals(TOP_HIT, searchResults.topHit().getCompanyName());
+        assertEquals(3, searchResults.items().size());
     }
 
     @Test
@@ -246,8 +246,8 @@ class AlphabeticalSearchRequestServiceTest {
                 SEARCH_BEFORE_VALUE, null, null, REQUEST_ID);
 
         assertNotNull(searchResults);
-        assertEquals(TOP_HIT, searchResults.getTopHit().getCompanyName());
-        assertEquals(1, searchResults.getItems().size());
+        assertEquals(TOP_HIT, searchResults.topHit().getCompanyName());
+        assertEquals(1, searchResults.items().size());
     }
 
     @Test
@@ -272,8 +272,8 @@ class AlphabeticalSearchRequestServiceTest {
                 null, SEARCH_AFTER_VALUE, null, REQUEST_ID);
 
         assertNotNull(searchResults);
-        assertEquals(TOP_HIT, searchResults.getTopHit().getCompanyName());
-        assertEquals(1, searchResults.getItems().size());
+        assertEquals(TOP_HIT, searchResults.topHit().getCompanyName());
+        assertEquals(1, searchResults.items().size());
     }
 
     @Test
@@ -301,8 +301,8 @@ class AlphabeticalSearchRequestServiceTest {
                 SEARCH_BEFORE_VALUE, SEARCH_AFTER_VALUE, 20, REQUEST_ID);
 
         assertNotNull(searchResults);
-        assertEquals(TOP_HIT, searchResults.getTopHit().getCompanyName());
-        assertEquals(3, searchResults.getItems().size());
+        assertEquals(TOP_HIT, searchResults.topHit().getCompanyName());
+        assertEquals(3, searchResults.items().size());
     }
 
 
@@ -343,19 +343,15 @@ class AlphabeticalSearchRequestServiceTest {
     }
 
     private Company createCompany() {
-        Company company = new Company();
-        company.setCompanyName(COMPANY_NAME);
-        company.setCompanyNumber(COMPANY_NUMBER);
-        company.setCompanyStatus(COMPANY_STATUS);
-        company.setCompanyType(COMPANY_TYPE);
-        company.setOrderedAlphaKeyWithId(ORDERED_ALPHA_KEY_WITH_ID);
-        company.setKind(KIND);
-
-        Links links = new Links();
-        links.setCompanyProfile(COMPANY_PROFILE_LINK);
-        company.setLinks(links);
-
-        return company;
+        return Company.builder()
+                .companyName(COMPANY_NAME)
+                .companyNumber(COMPANY_NUMBER)
+                .companyStatus(COMPANY_STATUS)
+                .companyType(COMPANY_TYPE)
+                .orderedAlphaKeyWithId(ORDERED_ALPHA_KEY_WITH_ID)
+                .kind(KIND)
+                .links(new Links(COMPANY_PROFILE_LINK))
+                .build();
     }
 
     private TopHit createTopHit() {
@@ -367,9 +363,7 @@ class AlphabeticalSearchRequestServiceTest {
         topHit.setOrderedAlphaKeyWithId(ORDERED_ALPHA_KEY_WITH_ID);
         topHit.setKind(KIND);
 
-        Links links = new Links();
-        links.setCompanyProfile(COMPANY_PROFILE_LINK);
-        topHit.setLinks(links);
+        topHit.setLinks(new Links(COMPANY_PROFILE_LINK));
 
         return topHit;
     }

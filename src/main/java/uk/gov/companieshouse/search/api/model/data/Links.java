@@ -8,18 +8,10 @@ import com.google.gson.Gson;
 
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Links {
-
+public record Links(
     @JsonProperty("company_profile")
-    private String companyProfile;
-
-    public String getCompanyProfile() {
-        return companyProfile;
-    }
-
-    public void setCompanyProfile(String companyProfile) {
-        this.companyProfile = companyProfile;
-    }
+    String companyProfile
+) {
 
     @Override
     public String toString() {
