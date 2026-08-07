@@ -52,12 +52,12 @@ class OpenSearchResponseMapperTest {
         Company company =
                 mapper.mapAlphabeticalResponse(searchHits.hits().getFirst());
 
-        assertEquals(COMPANY_NAME, company.getCompanyName());
-        assertEquals(COMPANY_NUMBER, company.getCompanyNumber());
-        assertEquals(COMPANY_STATUS_ACTIVE, company.getCompanyStatus());
-        assertEquals(COMPANY_TYPE, company.getCompanyType());
-        assertEquals(ORDERED_ALPHA_KEY_WITH_ID, company.getOrderedAlphaKeyWithId());
-        assertEquals(COMPANY_PROFILE_LINK, company.getLinks().companyProfile());
+        assertEquals(COMPANY_NAME, company.companyName());
+        assertEquals(COMPANY_NUMBER, company.companyNumber());
+        assertEquals(COMPANY_STATUS_ACTIVE, company.companyStatus());
+        assertEquals(COMPANY_TYPE, company.companyType());
+        assertEquals(ORDERED_ALPHA_KEY_WITH_ID, company.orderedAlphaKeyWithId());
+        assertEquals(COMPANY_PROFILE_LINK, company.links().companyProfile());
     }
 
     @Test
@@ -94,16 +94,14 @@ class OpenSearchResponseMapperTest {
     }
 
     private Company createAlphabeticalCompany() {
-        Company company = new Company();
-        company.setCompanyName(COMPANY_NAME);
-        company.setCompanyNumber(COMPANY_NUMBER);
-        company.setCompanyStatus(COMPANY_STATUS_ACTIVE);
-        company.setCompanyType(COMPANY_TYPE);
-        company.setOrderedAlphaKeyWithId(ORDERED_ALPHA_KEY_WITH_ID);
-
-        company.setLinks(new Links(COMPANY_PROFILE_LINK));
-
-        return company;
+        return Company.builder()
+                .companyName(COMPANY_NAME)
+                .companyNumber(COMPANY_NUMBER)
+                .companyStatus(COMPANY_STATUS_ACTIVE)
+                .companyType(COMPANY_TYPE)
+                .orderedAlphaKeyWithId(ORDERED_ALPHA_KEY_WITH_ID)
+                .links(new Links(COMPANY_PROFILE_LINK))
+                .build();
     }
 
     private String readFile(String fileName) throws IOException, URISyntaxException {

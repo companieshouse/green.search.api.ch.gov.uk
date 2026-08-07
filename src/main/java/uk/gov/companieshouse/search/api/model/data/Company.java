@@ -9,170 +9,124 @@ import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Company {
-
-    @JsonProperty("company_name")
-    private String companyName;
-
-    @JsonProperty("company_number")
-    private String companyNumber;
-
-    @JsonProperty("company_status")
-    private String companyStatus;
-
-    @JsonProperty("company_type")
-    private String companyType;
-
-    @JsonProperty("company_subtype")
-    private String companySubtype;
-
-    @JsonProperty("ordered_alpha_key_with_id")
-    private String orderedAlphaKeyWithId;
-
-    @JsonProperty("kind")
-    private String kind;
-
-    @JsonProperty("record_type")
-    private String recordType;
-
-    @JsonProperty("links")
-    private Links links;
-
-    @JsonProperty("date_of_cessation")
-    private LocalDate dateOfCessation;
-
-    @JsonProperty("date_of_creation")
-    private LocalDate dateOfCreation;
-
-    @JsonProperty("registered_office_address")
-    private Address registeredOfficeAddress;
-
-    @JsonProperty("previous_company_names")
-    private List<PreviousCompanyName> previousCompanyNames;
-
-    @JsonProperty("matched_previous_company_name")
-    private PreviousCompanyName matchedPreviousCompanyName;
-
-    @JsonProperty("sic_codes")
-    private List<String> sicCodes;
-
-    public String getCompanyName() {
-        return companyName;
+public record Company(
+    @JsonProperty("company_name") String companyName,
+    @JsonProperty("company_number") String companyNumber,
+    @JsonProperty("company_status") String companyStatus,
+    @JsonProperty("company_type") String companyType,
+    @JsonProperty("company_subtype") String companySubtype,
+    @JsonProperty("ordered_alpha_key_with_id") String orderedAlphaKeyWithId,
+    @JsonProperty("kind") String kind,
+    @JsonProperty("record_type") String recordType,
+    @JsonProperty("links") Links links,
+    @JsonProperty("date_of_cessation") LocalDate dateOfCessation,
+    @JsonProperty("date_of_creation") LocalDate dateOfCreation,
+    @JsonProperty("registered_office_address") Address registeredOfficeAddress,
+    @JsonProperty("previous_company_names") List<PreviousCompanyName> previousCompanyNames,
+    @JsonProperty("matched_previous_company_name") PreviousCompanyName matchedPreviousCompanyName,
+    @JsonProperty("sic_codes") List<String> sicCodes
+) {
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
+    public static class Builder {
+        private String companyName;
+        private String companyNumber;
+        private String companyStatus;
+        private String companyType;
+        private String companySubtype;
+        private String orderedAlphaKeyWithId;
+        private String kind;
+        private String recordType;
+        private Links links;
+        private LocalDate dateOfCessation;
+        private LocalDate dateOfCreation;
+        private Address registeredOfficeAddress;
+        private List<PreviousCompanyName> previousCompanyNames;
+        private PreviousCompanyName matchedPreviousCompanyName;
+        private List<String> sicCodes;
 
-    public String getCompanyNumber() {
-        return companyNumber;
-    }
+        public Builder companyName(String companyName) {
+            this.companyName = companyName;
+            return this;
+        }
 
-    public void setCompanyNumber(String companyNumber) {
-        this.companyNumber = companyNumber;
-    }
+        public Builder companyNumber(String companyNumber) {
+            this.companyNumber = companyNumber;
+            return this;
+        }
 
-    public String getCompanyStatus() {
-        return companyStatus;
-    }
+        public Builder companyStatus(String companyStatus) {
+            this.companyStatus = companyStatus;
+            return this;
+        }
 
-    public void setCompanyStatus(String companyStatus) {
-        this.companyStatus = companyStatus;
-    }
+        public Builder companyType(String companyType) {
+            this.companyType = companyType;
+            return this;
+        }
 
-    public String getCompanyType() {
-        return companyType;
-    }
+        public Builder companySubtype(String companySubtype) {
+            this.companySubtype = companySubtype;
+            return this;
+        }
 
-    public void setCompanyType(String companyType) {
-        this.companyType = companyType;
-    }
+        public Builder orderedAlphaKeyWithId(String orderedAlphaKeyWithId) {
+            this.orderedAlphaKeyWithId = orderedAlphaKeyWithId;
+            return this;
+        }
 
-    public String getCompanySubtype() {
-        return companySubtype;
-    }
+        public Builder kind(String kind) {
+            this.kind = kind;
+            return this;
+        }
 
-    public void setCompanySubtype(String companySubtype) {
-        this.companySubtype = companySubtype;
-    }
+        public Builder recordType(String recordType) {
+            this.recordType = recordType;
+            return this;
+        }
 
-    public String getOrderedAlphaKeyWithId() {
-        return orderedAlphaKeyWithId;
-    }
+        public Builder links(Links links) {
+            this.links = links;
+            return this;
+        }
 
-    public void setOrderedAlphaKeyWithId(String orderedAlphaKeyWithId) {
-        this.orderedAlphaKeyWithId = orderedAlphaKeyWithId;
-    }
+        public Builder dateOfCessation(LocalDate dateOfCessation) {
+            this.dateOfCessation = dateOfCessation;
+            return this;
+        }
 
-    public String getKind() {
-        return kind;
-    }
+        public Builder dateOfCreation(LocalDate dateOfCreation) {
+            this.dateOfCreation = dateOfCreation;
+            return this;
+        }
 
-    public void setKind(String kind) {
-        this.kind = kind;
-    }
+        public Builder registeredOfficeAddress(Address registeredOfficeAddress) {
+            this.registeredOfficeAddress = registeredOfficeAddress;
+            return this;
+        }
 
-    public String getRecordType() {
-        return recordType;
-    }
+        public Builder previousCompanyNames(List<PreviousCompanyName> previousCompanyNames) {
+            this.previousCompanyNames = previousCompanyNames;
+            return this;
+        }
 
-    public void setRecordType(String recordType) {
-        this.recordType = recordType;
-    }
+        public Builder matchedPreviousCompanyName(PreviousCompanyName matchedPreviousCompanyName) {
+            this.matchedPreviousCompanyName = matchedPreviousCompanyName;
+            return this;
+        }
 
-    public Links getLinks() {
-        return links;
-    }
+        public Builder sicCodes(List<String> sicCodes) {
+            this.sicCodes = sicCodes;
+            return this;
+        }
 
-    public void setLinks(Links links) {
-        this.links = links;
-    }
-
-    public LocalDate getDateOfCessation() {
-        return dateOfCessation;
-    }
-
-    public void setDateOfCessation(LocalDate dateOfCessation) {
-        this.dateOfCessation = dateOfCessation;
-    }
-
-    public LocalDate getDateOfCreation() {
-        return dateOfCreation;
-    }
-
-    public void setDateOfCreation(LocalDate dateOfCreation) {
-        this.dateOfCreation = dateOfCreation;
-    }
-
-    public Address getRegisteredOfficeAddress() {
-        return registeredOfficeAddress;
-    }
-
-    public void setRegisteredOfficeAddress(Address registeredOfficeAddress) {
-        this.registeredOfficeAddress = registeredOfficeAddress;
-    }
-
-    public List<PreviousCompanyName> getPreviousCompanyNames() {
-        return previousCompanyNames;
-    }
-
-    public void setPreviousCompanyNames(List<PreviousCompanyName> previousCompanyNames) {
-        this.previousCompanyNames = previousCompanyNames;
-    }
-
-    public PreviousCompanyName getMatchedPreviousCompanyName() {
-        return matchedPreviousCompanyName;
-    }
-
-    public void setMatchedPreviousCompanyName(PreviousCompanyName matchedPreviousCompanyName) {
-        this.matchedPreviousCompanyName = matchedPreviousCompanyName;
-    }
-
-    public List<String> getSicCodes() {
-        return sicCodes;
-    }
-
-    public void setSicCodes(List<String> sicCodes) {
-        this.sicCodes = sicCodes;
+        public Company build() {
+            return new Company(companyName, companyNumber, companyStatus, companyType,
+                    companySubtype, orderedAlphaKeyWithId, kind, recordType, links,
+                    dateOfCessation, dateOfCreation, registeredOfficeAddress,
+                    previousCompanyNames, matchedPreviousCompanyName, sicCodes);
+        }
     }
 }

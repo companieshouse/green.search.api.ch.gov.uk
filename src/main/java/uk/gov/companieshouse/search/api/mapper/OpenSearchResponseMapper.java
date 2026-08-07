@@ -24,12 +24,12 @@ public class OpenSearchResponseMapper {
     public TopHit mapAlphabeticalTopHit(Company company) {
         TopHit topHit = new TopHit();
 
-        topHit.setCompanyName(company.getCompanyName());
-        topHit.setCompanyNumber(company.getCompanyNumber());
-        topHit.setCompanyStatus(company.getCompanyStatus());
-        topHit.setCompanyType(company.getCompanyType());
-        topHit.setLinks(company.getLinks());
-        topHit.setOrderedAlphaKeyWithId(company.getOrderedAlphaKeyWithId());
+        topHit.setCompanyName(company.companyName());
+        topHit.setCompanyNumber(company.companyNumber());
+        topHit.setCompanyStatus(company.companyStatus());
+        topHit.setCompanyType(company.companyType());
+        topHit.setLinks(company.links());
+        topHit.setOrderedAlphaKeyWithId(company.orderedAlphaKeyWithId());
         topHit.setKind(SEARCH_RESULTS_ALPHABETICAL_KIND);
 
         return topHit;
@@ -40,19 +40,16 @@ public class OpenSearchResponseMapper {
         Map<String, Object> items = (Map<String, Object>) sourceAsMap.get(ITEMS_KEY);
         Map<String, Object> links = (Map<String, Object>) sourceAsMap.get(LINKS_KEY);
 
-        Company company = new Company();
         Links companyLinks = new Links((String) (links.get(SELF_KEY)));
 
-        company.setCompanyName((String) (items.get(CORPORATE_NAME_KEY)));
-        company.setCompanyNumber((String) (items.get(COMPANY_NUMBER_KEY)));
-        company.setCompanyStatus((String) (items.get(COMPANY_STATUS_KEY)));
-        company.setOrderedAlphaKeyWithId((String) sourceAsMap.get(ORDERED_ALPHA_KEY_WITH_ID));
-        company.setKind(SEARCH_RESULTS_ALPHABETICAL_KIND);
-
-        company.setLinks(companyLinks);
-
-        company.setCompanyType((String) sourceAsMap.get(COMPANY_TYPE_KEY));
-
-        return company;
+        return Company.builder()
+                .companyName((String) items.get(CORPORATE_NAME_KEY))
+                .companyNumber((String) items.get(COMPANY_NUMBER_KEY))
+                .companyStatus((String) items.get(COMPANY_STATUS_KEY))
+                .companyType((String) sourceAsMap.get(COMPANY_TYPE_KEY))
+                .orderedAlphaKeyWithId((String) sourceAsMap.get(ORDERED_ALPHA_KEY_WITH_ID))
+                .kind(SEARCH_RESULTS_ALPHABETICAL_KIND)
+                .links(companyLinks)
+                .build();
     }
 }

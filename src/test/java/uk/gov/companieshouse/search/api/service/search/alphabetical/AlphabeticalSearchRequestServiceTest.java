@@ -343,17 +343,15 @@ class AlphabeticalSearchRequestServiceTest {
     }
 
     private Company createCompany() {
-        Company company = new Company();
-        company.setCompanyName(COMPANY_NAME);
-        company.setCompanyNumber(COMPANY_NUMBER);
-        company.setCompanyStatus(COMPANY_STATUS);
-        company.setCompanyType(COMPANY_TYPE);
-        company.setOrderedAlphaKeyWithId(ORDERED_ALPHA_KEY_WITH_ID);
-        company.setKind(KIND);
-
-        company.setLinks(new Links(COMPANY_PROFILE_LINK));
-
-        return company;
+        return Company.builder()
+                .companyName(COMPANY_NAME)
+                .companyNumber(COMPANY_NUMBER)
+                .companyStatus(COMPANY_STATUS)
+                .companyType(COMPANY_TYPE)
+                .orderedAlphaKeyWithId(ORDERED_ALPHA_KEY_WITH_ID)
+                .kind(KIND)
+                .links(new Links(COMPANY_PROFILE_LINK))
+                .build();
     }
 
     private TopHit createTopHit() {

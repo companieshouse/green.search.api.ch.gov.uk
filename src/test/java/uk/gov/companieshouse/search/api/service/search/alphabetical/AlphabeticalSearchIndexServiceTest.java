@@ -107,18 +107,15 @@ class AlphabeticalSearchIndexServiceTest {
 
     private List<Company> createResults() {
         List<Company> results = new ArrayList<>();
-        Company company = new Company();
-        Links links = new Links("self");
-
-        company.setCompanyName("corporateName");
-        company.setCompanyStatus("companyStatus");
-        company.setCompanyNumber("companyNumber");
-        company.setRecordType("recordType");
-
-        company.setCompanyType("companyType");
-        company.setLinks(links);
+        Company company = Company.builder()
+                .companyName("corporateName")
+                .companyNumber("companyNumber")
+                .companyStatus("companyStatus")
+                .companyType("companyType")
+                .recordType("recordType")
+                .links(new Links("self"))
+                .build();
         results.add(company);
-
         return results;
     }
 }
