@@ -1,6 +1,9 @@
 spring:
   application:
     name: green.search.api.ch.gov.uk
+  jackson:
+    mapper:
+      sort-properties-alphabetically: false
 server:
   servlet:
     context-path: /green
