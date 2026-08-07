@@ -54,7 +54,7 @@ class AlphabeticalSearchIndexServiceTest {
 
         assertNotNull(responseObject);
         assertEquals(ResponseStatus.SEARCH_FOUND, responseObject.getStatus());
-        assertEquals(1, responseObject.getData().getItems().size());
+        assertEquals(1, responseObject.getData().items().size());
     }
 
     @Test
@@ -92,20 +92,17 @@ class AlphabeticalSearchIndexServiceTest {
     }
 
     private SearchResults<Company> createSearchResults(boolean isResultsPopulated, boolean isItemsEmpty) {
-        SearchResults<Company> searchResults = new SearchResults<>();
-        searchResults.setKind("alphabetical");
+        TopHit searchTopHit = null;
+        List<Company> items = null;
 
         if (!isItemsEmpty) {
-            searchResults.setTopHit(topHit);
-
+            searchTopHit = topHit;
             if (isResultsPopulated) {
-                searchResults.setItems(createResults());
+                items = createResults();
             }
-        } else {
-            searchResults.setTopHit(null);
-            searchResults.setItems(null);
         }
-        return searchResults;
+
+        return new SearchResults<>(null, searchTopHit, items, "alphabetical", null);
     }
 
     private List<Company> createResults() {

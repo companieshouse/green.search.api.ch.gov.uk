@@ -21,7 +21,7 @@ public class AlphabeticalSearchIndexService implements SearchIndexService {
     private final ConfiguredIndexNamesProvider indices;
 
     public AlphabeticalSearchIndexService(SearchRequestService<Company> searchRequestService,
-        ConfiguredIndexNamesProvider indices) {
+                                          ConfiguredIndexNamesProvider indices) {
         this.searchRequestService = searchRequestService;
         this.indices = indices;
     }
@@ -31,7 +31,7 @@ public class AlphabeticalSearchIndexService implements SearchIndexService {
      */
     @Override
     public ResponseObject<Company> search(String corporateName, String searchBefore, String searchAfter, Integer size,
-            String requestId) {
+                                          String requestId) {
 
 
         Map<String, Object> logMap = new DataMap.Builder()
@@ -54,7 +54,7 @@ public class AlphabeticalSearchIndexService implements SearchIndexService {
             return new ResponseObject<>(ResponseStatus.SEARCH_ERROR, null);
         }
 
-        if(searchResults.getItems() != null && !searchResults.getItems().isEmpty()) {
+        if(searchResults.items() != null && !searchResults.items().isEmpty()) {
             getLogger().info("Search successful", logMap);
             return new ResponseObject<>(ResponseStatus.SEARCH_FOUND, searchResults);
         }
