@@ -1,15 +1,14 @@
 package uk.gov.companieshouse.search.api.service.upsert.alphabetical;
 
-import java.io.IOException;
 import java.util.Map;
 
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.update.UpdateRequest;
+import org.opensearch.client.opensearch.core.IndexRequest;
+import org.opensearch.client.opensearch.core.UpdateRequest;
 import org.springframework.stereotype.Service;
 
 import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
 import uk.gov.companieshouse.logging.util.DataMap;
-import uk.gov.companieshouse.search.api.elasticsearch.AlphabeticalSearchUpsertRequest;
+import uk.gov.companieshouse.search.api.opensearch.AlphabeticalSearchUpsertRequest;
 import uk.gov.companieshouse.search.api.exception.UpsertException;
 import uk.gov.companieshouse.search.api.logging.LoggingUtils;
 import uk.gov.companieshouse.search.api.model.response.AlphaKeyResponse;
@@ -37,7 +36,6 @@ public class AlphabeticalUpsertRequestService {
      * Create an index request for document if it does not currently exist
      * @param company - Company sent over in REST call to be added/updated
      * @return {@link IndexRequest}
-     * @throws UpsertException
      */
     public IndexRequest createIndexRequest(CompanyProfileApi company) throws UpsertException {
 
@@ -57,14 +55,16 @@ public class AlphabeticalUpsertRequestService {
             logMap.put(LoggingUtils.ORDERED_ALPHAKEY, orderedAlphaKey);
         }
 
-        try {
-            LoggingUtils.getLogger().info("Preparing index request", logMap);
-            return new IndexRequest(indices.alphabetical())
-                    .source(alphabeticalSearchUpsertRequest.buildRequest(company, orderedAlphaKey, orderedAlphaKeyWithID)).id(company.getCompanyNumber());
-        } catch (IOException e) {
-            LoggingUtils.getLogger().error("Failed to index a document for company", logMap);
-            throw new UpsertException("Unable create index request");
-        }
+        LoggingUtils.getLogger().info("Preparing index request", logMap);
+
+
+        Map<String, Object> source = alphabeticalSearchUpsertRequest.buildRequest(company, orderedAlphaKey, orderedAlphaKeyWithID);
+
+        return org.opensearch.client.opensearch.core.IndexRequest.of(i -> i
+                .index(indices.alphabetical())
+                .id(company.getCompanyNumber())
+                .document(source)
+        );
     }
 
     /**
@@ -72,9 +72,8 @@ public class AlphabeticalUpsertRequestService {
      * @param company - Company sent over in REST call to be added/updated
      * @param indexRequest
      * @return {@link UpdateRequest}
-     * @throws UpsertException
      */
-    public UpdateRequest createUpdateRequest(CompanyProfileApi company, IndexRequest indexRequest)
+    public UpdateRequest<Object, Object> createUpdateRequest(CompanyProfileApi company, IndexRequest indexRequest)
             throws UpsertException {
         Map<String, Object> logMap = new DataMap.Builder()
                 .companyName(company.getCompanyName())
@@ -92,16 +91,18 @@ public class AlphabeticalUpsertRequestService {
             orderedAlphaKeyWithID = alphaKeyResponse.getOrderedAlphaKey() + ":" + company.getCompanyNumber();
         }
 
-        try {
-            LoggingUtils.getLogger().info("Attempt to upsert document if it does not exist", logMap);
+        LoggingUtils.getLogger().info("Attempt to upsert document if it does not exist", logMap);
 
-            return new UpdateRequest(indices.alphabetical(), company.getCompanyNumber())
-                    .docAsUpsert(true)
-                    .doc(alphabeticalSearchUpsertRequest.buildRequest(company, orderedAlphaKey, orderedAlphaKeyWithID))
-                    .upsert(indexRequest);
-        } catch (IOException e) {
-            LoggingUtils.getLogger().error("Failed to update a document for company", logMap);
-            throw new UpsertException("Unable to create update request");
-        }
+
+        Map<String, Object> doc = alphabeticalSearchUpsertRequest.buildRequest(company, orderedAlphaKey, orderedAlphaKeyWithID);
+
+        return org.opensearch.client.opensearch.core.UpdateRequest.of(u -> u
+                .index(indices.alphabetical())
+                .id(company.getCompanyNumber())
+                .doc(doc)
+                .docAsUpsert(true)
+                .upsert(indexRequest)
+        );
+
     }
 }
