@@ -1,15 +1,13 @@
 package uk.gov.companieshouse.search.api.controller;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
 import uk.gov.companieshouse.environment.EnvironmentReader;
 import uk.gov.companieshouse.search.api.mapper.ApiToResponseMapper;
@@ -25,6 +23,7 @@ import uk.gov.companieshouse.search.api.util.ConfiguredIndexNamesProvider;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,20 +59,20 @@ class AlphabeticalSearchControllerTest {
         ResponseObject<Company> responseObject =
                 new ResponseObject<>(ResponseStatus.SEARCH_FOUND, new SearchResults<>());
 
-        Mockito.when(configuredIndexNamesProvider.alphabetical())
+        when(configuredIndexNamesProvider.alphabetical())
                 .thenReturn("alpha-index");
 
-        Mockito.when(environmentReader.getMandatoryInteger("ALPHABETICAL_SEARCH_RESULT_MAX"))
+        when(environmentReader.getMandatoryInteger("ALPHABETICAL_SEARCH_RESULT_MAX"))
                 .thenReturn(20);
 
-        Mockito.when(environmentReader.getMandatoryInteger("MAX_SIZE_PARAM"))
+        when(environmentReader.getMandatoryInteger("MAX_SIZE_PARAM"))
                 .thenReturn(100);
 
-        Mockito.when(searchIndexService.search("test company", null, null, 10,
+        when(searchIndexService.search("test company", null, null, 10,
                         "request-id"))
                 .thenReturn(responseObject);
 
-        Mockito.when(apiToResponseMapper.map(any()))
+        when(apiToResponseMapper.map(any()))
                 .thenReturn(ResponseEntity.ok().contentType(APPLICATION_JSON).body(responseObject));
 
         mockMvc.perform(get("/alphabetical-search/companies")
@@ -99,10 +98,10 @@ class AlphabeticalSearchControllerTest {
 
         ResponseObject<String> responseObject = new ResponseObject<>(ResponseStatus.DOCUMENT_UPSERTED);
 
-        Mockito.when(upsertCompanyService.upsert(any(CompanyProfileApi.class)))
+        when(upsertCompanyService.upsert(any(CompanyProfileApi.class)))
                 .thenReturn(responseObject);
 
-        Mockito.when(apiToResponseMapper.map(any()))
+        when(apiToResponseMapper.map(any()))
                 .thenReturn(ResponseEntity.ok().contentType(APPLICATION_JSON).body(responseObject));
 
         mockMvc.perform(put("/alphabetical-search/companies/12345678")
@@ -121,34 +120,61 @@ class AlphabeticalSearchControllerTest {
 
         ResponseObject<String> responseObject = new ResponseObject<>(ResponseStatus.UPSERT_ERROR);
 
-        Mockito.when(apiToResponseMapper.map(any()))
+        when(apiToResponseMapper.map(any()))
                 .thenReturn(ResponseEntity.ok().contentType(APPLICATION_JSON).body(responseObject));
 
-        ResultActions resultActions = mockMvc.perform(put("/alphabetical-search/companies/87654321")
+        MvcResult result = mockMvc.perform(put("/alphabetical-search/companies/87654321")
                         .contentType(APPLICATION_JSON)
                         .content(asJsonString(company)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk()).andReturn();
 
-        assertTrue(resultActions.andReturn().getResponse().getContentAsString().contains(ResponseStatus.UPSERT_ERROR.name()));
+        assertTrue(result.getResponse().getContentAsString().contains(ResponseStatus.UPSERT_ERROR.name()));
 
         verify(upsertCompanyService, Mockito.never()).upsert(any());
     }
 
     @Test
-    void upsertCompanyWithEmptyNumberReturnsBadRequest() throws Exception {
-        CompanyProfileApi company = new CompanyProfileApi();
-        company.setCompanyNumber("12345678");
-        company.setCompanyName("Test Company Ltd");
+    void deleteCompanySuccessfully() throws Exception {
+        String companyNumber = "12345678";
 
-        ResponseObject<String> responseObject = new ResponseObject<>(ResponseStatus.UPSERT_ERROR);
+        ResponseObject<String> responseObject = new ResponseObject<>(ResponseStatus.DOCUMENT_DELETED);
 
-        Mockito.when(apiToResponseMapper.map(any()))
+        when(configuredIndexNamesProvider.alphabetical())
+                .thenReturn("alpha-index");
+
+        when(alphabeticalSearchDeleteService.deleteCompany(companyNumber))
+                .thenReturn(responseObject);
+
+        when(apiToResponseMapper.map(any()))
                 .thenReturn(ResponseEntity.ok().contentType(APPLICATION_JSON).body(responseObject));
 
-        mockMvc.perform(put("/alphabetical-search/companies/")
-                        .contentType(APPLICATION_JSON)
-                        .content(asJsonString(company)))
-                .andExpect(status().isNotFound());
+        mockMvc.perform(delete("/alphabetical-search/companies/{company_number}", companyNumber))
+                .andExpect(status().isOk());
+
+        verify(alphabeticalSearchDeleteService, Mockito.times(1)).deleteCompany(companyNumber);
+    }
+
+    @Test
+    void deleteCompanyNotFoundReturnsDeleteNotFound() throws Exception {
+        String companyNumber = "12345678";
+
+        ResponseObject<String> responseObject = new ResponseObject<>(ResponseStatus.DELETE_NOT_FOUND);
+
+        when(configuredIndexNamesProvider.alphabetical())
+                .thenReturn("alpha-index");
+
+        when(alphabeticalSearchDeleteService.deleteCompany(companyNumber))
+                .thenReturn(responseObject);
+
+        when(apiToResponseMapper.map(any()))
+                .thenReturn(ResponseEntity.ok().contentType(APPLICATION_JSON).body(responseObject));
+
+        MvcResult result = mockMvc.perform(delete("/alphabetical-search/companies/{company_number}", companyNumber))
+                .andExpect(status().isOk()).andReturn();
+
+        assertTrue(result.getResponse().getContentAsString().contains(ResponseStatus.DELETE_NOT_FOUND.name()));
+
+        verify(alphabeticalSearchDeleteService, Mockito.times(1)).deleteCompany(companyNumber);
     }
 
     private String asJsonString(final Object obj) throws Exception {
