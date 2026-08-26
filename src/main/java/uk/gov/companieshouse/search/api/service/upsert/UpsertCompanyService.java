@@ -5,7 +5,6 @@ import org.opensearch.client.opensearch.core.UpdateRequest;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
 import uk.gov.companieshouse.logging.util.DataMap;
-import uk.gov.companieshouse.search.api.exception.UpsertException;
 import uk.gov.companieshouse.search.api.model.response.ResponseObject;
 import uk.gov.companieshouse.search.api.model.response.ResponseStatus;
 import uk.gov.companieshouse.search.api.service.rest.AlphabeticalSearchRestClientService;
@@ -52,13 +51,9 @@ public class UpsertCompanyService  {
 
         UpdateRequest<Object, Map<String, Object>> updateRequest;
 
-        try {
-            IndexRequest<Map<String, Object>> indexRequest = alphabeticalUpsertRequestService.createIndexRequest(company);
-            updateRequest = alphabeticalUpsertRequestService.createUpdateRequest(company, indexRequest);
-        } catch (UpsertException e) {
-            getLogger().error("An error occured attempting upsert the document on OpenSearch", logMap);
-            return new ResponseObject<>(ResponseStatus.UPSERT_ERROR);
-        }
+        IndexRequest<Map<String, Object>> indexRequest = alphabeticalUpsertRequestService.createIndexRequest(company);
+        updateRequest = alphabeticalUpsertRequestService.createUpdateRequest(company, indexRequest);
+
         try {
             alphabeticalSearchRestClientService.upsert(updateRequest);
         } catch (IOException e) {

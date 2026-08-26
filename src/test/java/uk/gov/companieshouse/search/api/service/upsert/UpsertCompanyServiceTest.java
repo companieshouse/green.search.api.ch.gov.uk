@@ -1,11 +1,9 @@
 package uk.gov.companieshouse.search.api.service.upsert;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.search.api.model.response.ResponseStatus.DOCUMENT_UPSERTED;
 import static uk.gov.companieshouse.search.api.model.response.ResponseStatus.UPDATE_REQUEST_ERROR;
-import static uk.gov.companieshouse.search.api.model.response.ResponseStatus.UPSERT_ERROR;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -19,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.opensearch.client.opensearch.core.IndexRequest;
 import org.opensearch.client.opensearch.core.UpdateRequest;
 import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
-import uk.gov.companieshouse.search.api.exception.UpsertException;
 import uk.gov.companieshouse.search.api.model.response.ResponseObject;
 import uk.gov.companieshouse.search.api.service.rest.AlphabeticalSearchRestClientService;
 import uk.gov.companieshouse.search.api.service.upsert.alphabetical.AlphabeticalUpsertRequestService;
@@ -45,7 +42,7 @@ class UpsertCompanyServiceTest {
 
     @Test
     @DisplayName("Test upsert is successful")
-    void testUpsertIsSuccessful() throws Exception {
+    void testUpsertIsSuccessful() {
 
         CompanyProfileApi company = createCompany();
         IndexRequest<Map<String, Object>> indexRequest = IndexRequest.of(i -> i
@@ -65,21 +62,19 @@ class UpsertCompanyServiceTest {
 
     @Test
     @DisplayName("Test exception thrown during index request")
-    void testExceptionThrownDuringIndexRequest() throws Exception {
+    void testExceptionThrownDuringIndexRequest() {
 
         CompanyProfileApi company = createCompany();
 
-        when(mockAlphabeticalUpsertRequestService.createIndexRequest(company)).thenThrow(UpsertException.class);
+        when(mockAlphabeticalUpsertRequestService.createIndexRequest(company)).thenThrow(RuntimeException.class);
 
-        ResponseObject<?> responseObject = upsertCompanyService.upsert(company);
-
-        assertNotNull(responseObject);
-        assertEquals(UPSERT_ERROR, responseObject.getStatus());
+        assertThrows(RuntimeException.class,
+            () -> upsertCompanyService.upsert(company));
     }
 
     @Test
     @DisplayName("Test exception thrown during update request")
-    void testExceptionThrownDuringUpdateRequest() throws Exception {
+    void testExceptionThrownDuringUpdateRequest() {
 
         CompanyProfileApi company = createCompany();
         IndexRequest<Map<String, Object>> indexRequest = IndexRequest.of(i -> i
@@ -88,12 +83,10 @@ class UpsertCompanyServiceTest {
 
         when(mockAlphabeticalUpsertRequestService.createIndexRequest(company)).thenReturn(indexRequest);
         when(mockAlphabeticalUpsertRequestService.createUpdateRequest(
-            company, indexRequest)).thenThrow(UpsertException.class);
+            company, indexRequest)).thenThrow(RuntimeException.class);
 
-        ResponseObject<?> responseObject = upsertCompanyService.upsert(company);
-
-        assertNotNull(responseObject);
-        assertEquals(UPSERT_ERROR, responseObject.getStatus());
+        assertThrows(RuntimeException.class,
+            () -> upsertCompanyService.upsert(company));
     }
 
     @Test

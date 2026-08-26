@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
 import uk.gov.companieshouse.logging.util.DataMap;
 import uk.gov.companieshouse.search.api.opensearch.AlphabeticalSearchUpsertRequest;
-import uk.gov.companieshouse.search.api.exception.UpsertException;
 import uk.gov.companieshouse.search.api.logging.LoggingUtils;
 import uk.gov.companieshouse.search.api.model.response.AlphaKeyResponse;
 import uk.gov.companieshouse.search.api.service.AlphaKeyService;
@@ -37,7 +36,7 @@ public class AlphabeticalUpsertRequestService {
      * @param company - Company sent over in REST call to be added/updated
      * @return {@link IndexRequest}
      */
-    public IndexRequest<Map<String, Object>> createIndexRequest(CompanyProfileApi company) throws UpsertException {
+    public IndexRequest<Map<String, Object>> createIndexRequest(CompanyProfileApi company) {
 
         Map<String, Object> logMap = new DataMap.Builder()
                 .companyName(company.getCompanyName())
@@ -74,8 +73,7 @@ public class AlphabeticalUpsertRequestService {
      * @return {@link UpdateRequest}
      */
     public UpdateRequest<Object, Map<String, Object>> createUpdateRequest(
-            CompanyProfileApi company, IndexRequest<Map<String, Object>> indexRequest)
-            throws UpsertException {
+            CompanyProfileApi company, IndexRequest<Map<String, Object>> indexRequest) {
         Map<String, Object> logMap = new DataMap.Builder()
                 .companyName(company.getCompanyName())
                 .companyNumber(company.getCompanyNumber())

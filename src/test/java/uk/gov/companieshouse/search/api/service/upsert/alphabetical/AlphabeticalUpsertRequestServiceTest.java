@@ -57,7 +57,7 @@ class AlphabeticalUpsertRequestServiceTest {
 
     @Test
     @DisplayName("Test create index and update request is successful")
-    void testCreateIndexRequestSuccessful() throws Exception {
+    void testCreateIndexRequestSuccessful() {
 
         CompanyProfileApi company = createCompany();
 
@@ -99,9 +99,17 @@ class AlphabeticalUpsertRequestServiceTest {
 
         CompanyProfileApi company = createCompany();
 
+        when(mockAlphabeticalSearchUpsertRequest.buildRequest(company, ORDERED_ALPHA_KEY_FIELD,
+            ORDERED_ALPHA_KEY_WITH_ID_FIELD)).thenThrow(RuntimeException.class);
+        when(indices.alphabetical()).thenReturn(ALPHA_SEARCH);
+        when(mockAlphaKeyService.getAlphaKeyForCorporateName(anyString())).thenReturn(createResponse());
+
+        IndexRequest<Map<String, Object>> indexRequest = IndexRequest.of(i -> i
+                .index(ALPHA_SEARCH)
+                .document(new HashMap<>()));
+
         assertThrows(RuntimeException.class,
-            () -> alphabeticalUpsertRequestService.createUpdateRequest(company,
-                    IndexRequest.of(i -> i.index(ALPHA_SEARCH))));
+            () -> alphabeticalUpsertRequestService.createUpdateRequest(company, indexRequest));
     }
 
     private CompanyProfileApi createCompany() {
