@@ -1,21 +1,16 @@
 package uk.gov.companieshouse.search.api.controller;
 
-import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
 import uk.gov.companieshouse.environment.EnvironmentReader;
 import uk.gov.companieshouse.logging.util.DataMap;
 import uk.gov.companieshouse.search.api.exception.SizeException;
-import uk.gov.companieshouse.search.api.logging.LoggingUtils;
 import uk.gov.companieshouse.search.api.mapper.ApiToResponseMapper;
 import uk.gov.companieshouse.search.api.model.response.ResponseObject;
 import uk.gov.companieshouse.search.api.model.response.ResponseStatus;
-import uk.gov.companieshouse.search.api.service.delete.alphabetical.AlphabeticalSearchDeleteService;
 import uk.gov.companieshouse.search.api.service.search.SearchIndexService;
 import uk.gov.companieshouse.search.api.service.search.SearchRequestUtils;
-import uk.gov.companieshouse.search.api.service.upsert.UpsertCompanyService;
 import uk.gov.companieshouse.search.api.util.ConfiguredIndexNamesProvider;
 
 import java.util.Map;
@@ -36,22 +31,15 @@ public class AlphabeticalSearchController {
     private static final String ALPHABETICAL_SEARCH_RESULT_MAX = "ALPHABETICAL_SEARCH_RESULT_MAX";
 
     private final SearchIndexService searchIndexService;
-    private final UpsertCompanyService upsertCompanyService;
-    private final AlphabeticalSearchDeleteService alphabeticalSearchDeleteService;
 
     private final ApiToResponseMapper apiToResponseMapper;
     private final EnvironmentReader environmentReader;
     private final ConfiguredIndexNamesProvider indices;
 
-    public AlphabeticalSearchController(final SearchIndexService searchIndexService,
-                                        final UpsertCompanyService upsertCompanyService,
-                                        final AlphabeticalSearchDeleteService alphabeticalSearchDeleteService,
-                                        final ApiToResponseMapper apiToResponseMapper,
-                                        final EnvironmentReader environmentReader,
-                                        final ConfiguredIndexNamesProvider indices) {
+    public AlphabeticalSearchController(SearchIndexService searchIndexService,
+                                        ApiToResponseMapper apiToResponseMapper,
+                                        EnvironmentReader environmentReader, ConfiguredIndexNamesProvider indices) {
         this.searchIndexService = searchIndexService;
-        this.upsertCompanyService = upsertCompanyService;
-        this.alphabeticalSearchDeleteService = alphabeticalSearchDeleteService;
         this.apiToResponseMapper = apiToResponseMapper;
         this.environmentReader = environmentReader;
         this.indices = indices;
@@ -87,43 +75,6 @@ public class AlphabeticalSearchController {
         ResponseObject<?> responseObject = searchIndexService
                 .search(companyName, searchBefore, searchAfter, size, requestId);
 
-        return apiToResponseMapper.map(responseObject);
-    }
-
-    @PutMapping("/companies/{company_number}")
-    public ResponseEntity<Object> upsertCompany(@PathVariable("company_number") String companyNumber,
-                                                @Valid @RequestBody CompanyProfileApi company) {
-        Map<String, Object> logMap = new DataMap.Builder()
-                .companyName(company.getCompanyName())
-                .companyNumber(company.getCompanyNumber())
-                .upsertCompanyNumber(companyNumber)
-                .build().getLogMap();
-
-        getLogger().info("Upserting company", logMap);
-
-        ResponseObject<?> responseObject;
-
-        if (companyNumber == null || companyNumber.isEmpty()
-                || !companyNumber.equalsIgnoreCase(company.getCompanyNumber())) {
-            responseObject = new ResponseObject<>(ResponseStatus.UPSERT_ERROR);
-        } else {
-            responseObject = upsertCompanyService.upsert(company);
-        }
-        return apiToResponseMapper.map(responseObject);
-    }
-
-    @DeleteMapping("/companies/{company_number}")
-    public ResponseEntity<Object> deleteCompany(@PathVariable("company_number") String companyNumber) {
-        Map<String, Object> logMap = LoggingUtils.setUpAlphabeticalSearchDeleteLogging(companyNumber, indices);
-        getLogger().info("Attempting to delete a company from alphabetical search index", logMap);
-
-        ResponseObject<?> responseObject;
-
-        if (companyNumber == null || companyNumber.isEmpty()) {
-            responseObject = new ResponseObject<>(ResponseStatus.DELETE_NOT_FOUND);
-        } else {
-            responseObject = alphabeticalSearchDeleteService.deleteCompany(companyNumber);
-        }
         return apiToResponseMapper.map(responseObject);
     }
 

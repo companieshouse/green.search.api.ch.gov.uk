@@ -7,8 +7,6 @@ import java.util.Map;
 
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
-import uk.gov.companieshouse.logging.util.DataMap;
-import uk.gov.companieshouse.search.api.util.ConfiguredIndexNamesProvider;
 
 public class LoggingUtils {
 
@@ -61,13 +59,5 @@ public class LoggingUtils {
         Map<String, Object> logMap = new HashMap<>();
         logMap.put(REQUEST_ID, requestId);
         return logMap;
-    }
-
-    public static Map<String, Object> setUpAlphabeticalSearchDeleteLogging(
-            String companyName,
-            ConfiguredIndexNamesProvider indices) {
-        return new DataMap.Builder()
-                .companyName(companyName)
-                .indexName(indices.alphabetical()).build().getLogMap();
     }
 }
