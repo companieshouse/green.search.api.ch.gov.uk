@@ -37,7 +37,7 @@ public class AlphabeticalUpsertRequestService {
      * @param company - Company sent over in REST call to be added/updated
      * @return {@link IndexRequest}
      */
-    public IndexRequest createIndexRequest(CompanyProfileApi company) throws UpsertException {
+    public IndexRequest<Map<String, Object>> createIndexRequest(CompanyProfileApi company) throws UpsertException {
 
         Map<String, Object> logMap = new DataMap.Builder()
                 .companyName(company.getCompanyName())
@@ -60,7 +60,7 @@ public class AlphabeticalUpsertRequestService {
 
         Map<String, Object> source = alphabeticalSearchUpsertRequest.buildRequest(company, orderedAlphaKey, orderedAlphaKeyWithID);
 
-        return org.opensearch.client.opensearch.core.IndexRequest.of(i -> i
+        return IndexRequest.of(i -> i
                 .index(indices.alphabetical())
                 .id(company.getCompanyNumber())
                 .document(source)
@@ -70,10 +70,11 @@ public class AlphabeticalUpsertRequestService {
     /**
      * If document already exists attempt to upsert the document
      * @param company - Company sent over in REST call to be added/updated
-     * @param indexRequest
+     * @param indexRequest - Index request to be used
      * @return {@link UpdateRequest}
      */
-    public UpdateRequest<Object, Object> createUpdateRequest(CompanyProfileApi company, IndexRequest indexRequest)
+    public UpdateRequest<Object, Map<String, Object>> createUpdateRequest(
+            CompanyProfileApi company, IndexRequest<Map<String, Object>> indexRequest)
             throws UpsertException {
         Map<String, Object> logMap = new DataMap.Builder()
                 .companyName(company.getCompanyName())
@@ -96,7 +97,7 @@ public class AlphabeticalUpsertRequestService {
 
         Map<String, Object> doc = alphabeticalSearchUpsertRequest.buildRequest(company, orderedAlphaKey, orderedAlphaKeyWithID);
 
-        return org.opensearch.client.opensearch.core.UpdateRequest.of(u -> u
+        return UpdateRequest.of(u -> u
                 .index(indices.alphabetical())
                 .id(company.getCompanyNumber())
                 .doc(doc)

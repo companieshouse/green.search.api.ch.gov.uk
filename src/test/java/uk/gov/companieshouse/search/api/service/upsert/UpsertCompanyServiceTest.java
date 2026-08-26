@@ -34,7 +34,7 @@ class UpsertCompanyServiceTest {
     private AlphabeticalUpsertRequestService mockAlphabeticalUpsertRequestService;
 
     @Mock
-    private UpdateRequest<Object, Object> updateRequest;
+    private UpdateRequest<Object, Map<String, Object>> updateRequest;
 
     @Mock
     private ConfiguredIndexNamesProvider indices;

@@ -50,10 +50,10 @@ public class UpsertCompanyService  {
                 .build().getLogMap();
         getLogger().info("OpenSearch Upserting company underway", logMap);
 
-        UpdateRequest updateRequest;
+        UpdateRequest<Object, Map<String, Object>> updateRequest;
 
         try {
-            IndexRequest indexRequest = alphabeticalUpsertRequestService.createIndexRequest(company);
+            IndexRequest<Map<String, Object>> indexRequest = alphabeticalUpsertRequestService.createIndexRequest(company);
             updateRequest = alphabeticalUpsertRequestService.createUpdateRequest(company, indexRequest);
         } catch (UpsertException e) {
             getLogger().error("An error occured attempting upsert the document on OpenSearch", logMap);

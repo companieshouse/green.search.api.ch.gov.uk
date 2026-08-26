@@ -7,6 +7,7 @@ import org.opensearch.client.opensearch.core.UpdateRequest;
 import org.opensearch.client.opensearch.core.UpdateResponse;
 
 import java.io.IOException;
+import java.util.Map;
 
 public interface RestClientService {
 
@@ -24,6 +25,6 @@ public interface RestClientService {
      * @param updateRequest - updateRequest containing update parameters
      * @return UpdateResponse - response from elastic search db
      */
-    UpdateResponse upsert(UpdateRequest updateRequest) throws IOException;
+    UpdateResponse<Object> upsert(UpdateRequest<Object, Map<String, Object>> updateRequest) throws IOException;
 
 }

@@ -71,8 +71,8 @@ class AlphabeticalUpsertRequestServiceTest {
             ORDERED_ALPHA_KEY_WITH_ID_FIELD))
             .thenReturn(requestMap);
 
-        IndexRequest indexRequest = alphabeticalUpsertRequestService.createIndexRequest(company);
-        UpdateRequest<Object, Object> updateRequest = alphabeticalUpsertRequestService.createUpdateRequest(company, indexRequest);
+        IndexRequest<Map<String, Object>> indexRequest = alphabeticalUpsertRequestService.createIndexRequest(company);
+        UpdateRequest<Object, Map<String, Object>> updateRequest = alphabeticalUpsertRequestService.createUpdateRequest(company, indexRequest);
 
         assertNotNull(indexRequest);
         assertNotNull(updateRequest);
