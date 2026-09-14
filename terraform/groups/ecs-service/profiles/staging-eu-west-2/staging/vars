@@ -1,5 +1,6 @@
 environment = "staging"
 aws_profile = "staging-eu-west-2"
+opensearch_domain_name = "staging-alphabetical-search"
 
 # service configs
 use_set_environment_files = true
