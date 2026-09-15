@@ -1,5 +1,6 @@
 environment = "live"
 aws_profile = "live-eu-west-2"
+opensearch_domain_name = "live-alphabetical-search"
 
 # service configs
 use_set_environment_files = true
