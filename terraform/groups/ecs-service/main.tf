@@ -92,6 +92,9 @@ module "ecs-service" {
   eric_port                 = local.eric_port
   eric_environment_filename = local.eric_environment_filename
   eric_secrets              = local.eric_secrets
+
+  iac_tags   = module.iac_tags.tags
+  owner_tags = module.owner_tags.tags
 }
 
 module "secrets" {
@@ -101,4 +104,17 @@ module "secrets" {
   environment = var.environment
   kms_key_id  = data.aws_kms_key.kms_key.id
   secrets     = nonsensitive(local.service_secrets)
+}
+
+module "iac_tags" {
+  source = "git@github.com:companieshouse/terraform-modules//aws/tagging/iac?ref=tags/1.0.420"
+
+  group           = "infrastructure"
+  source_code_url = "https://github.com/companieshouse/green.search.api.ch.gov.uk"
+}
+
+module "owner_tags" {
+  source = "git@github.com:companieshouse/terraform-modules//aws/tagging/owner?ref=tags/1.0.420"
+
+  platform_owner = "platform"
 }
