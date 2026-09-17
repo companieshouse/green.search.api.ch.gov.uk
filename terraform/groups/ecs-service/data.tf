@@ -39,7 +39,7 @@ data "aws_lb" "service_lb" {
 
 data "aws_lb_listener" "service_lb_listener" {
   load_balancer_arn = data.aws_lb.service_lb.arn
-  port = 443
+  port              = 443
 }
 
 data "aws_lb" "secondary_lb" {
@@ -48,7 +48,7 @@ data "aws_lb" "secondary_lb" {
 
 data "aws_lb_listener" "secondary_lb_listener" {
   load_balancer_arn = data.aws_lb.secondary_lb.arn
-  port = 443
+  port              = 443
 }
 
 # retrieve all secrets for this stack using the stack path
@@ -74,4 +74,32 @@ data "aws_ssm_parameter" "global_secret" {
 // --- s3 bucket for shared services config ---
 data "vault_generic_secret" "shared_s3" {
   path = "aws-accounts/shared-services/s3"
+}
+
+data "aws_opensearch_domain" "opensearch" {
+  for_each    = toset(var.opensearch_domain_names)
+  
+  domain_name = "${var.environment}-${each.value}"
+}
+
+data "aws_iam_policy_document" "task_assume" {
+  statement {
+    sid     = "AllowTaskAssumeRole"
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+}
+
+data "aws_iam_policy_document" "task_policy" {
+  statement {
+    sid       = "AllowOpenSearchAccess"
+    effect    = "Allow"
+    actions   = ["es:ESHttpGet", "es:ESHttpPost", "es:ESHttpHead", "es:ESHttpPut", "es:ESHttpDelete"]
+    resources = [for domain in data.aws_opensearch_domain.opensearch : "${domain.arn}/*"]
+  }
 }

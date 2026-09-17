@@ -77,4 +77,10 @@ locals {
     { "name" : "PORT", "value" : local.container_port },
     { "name" : "LOGLEVEL", "value" : var.log_level }
   ])
+
+  default_tags = merge(
+    module.iac_tags.tags,
+    module.owner_tags.tags
+  )
 }
+ 

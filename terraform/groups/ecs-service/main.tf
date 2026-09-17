@@ -27,6 +27,7 @@ module "ecs-service" {
   vpc_id                  = data.aws_vpc.vpc.id
   ecs_cluster_id          = data.aws_ecs_cluster.ecs_cluster.id
   task_execution_role_arn = data.aws_iam_role.ecs_cluster_iam_role.arn
+  task_role_arn           = aws_iam_role.task_role.arn
 
   # Load balancer configuration
   lb_listener_arn           = data.aws_lb_listener.service_lb_listener.arn
@@ -91,6 +92,10 @@ module "ecs-service" {
   eric_port                 = local.eric_port
   eric_environment_filename = local.eric_environment_filename
   eric_secrets              = local.eric_secrets
+
+  default_tags = local.default_tags
+
+
 }
 
 module "secrets" {
@@ -100,4 +105,17 @@ module "secrets" {
   environment = var.environment
   kms_key_id  = data.aws_kms_key.kms_key.id
   secrets     = nonsensitive(local.service_secrets)
+}
+
+module "iac_tags" {
+  source = "git@github.com:companieshouse/terraform-modules//aws/tagging/iac?ref=tags/1.0.420"
+
+  group           = "infrastructure"
+  source_code_url = "https://github.com/companieshouse/green.search.api.ch.gov.uk"
+}
+
+module "owner_tags" {
+  source = "git@github.com:companieshouse/terraform-modules//aws/tagging/owner?ref=tags/1.0.420"
+
+  platform_owner = "platform"
 }
