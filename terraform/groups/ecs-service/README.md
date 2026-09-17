@@ -11,8 +11,8 @@
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.54.0 |
-| <a name="provider_vault"></a> [vault](#provider\_vault) | ~> 3.18.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.54.0 |
+| <a name="provider_vault"></a> [vault](#provider\_vault) | 3.18.0 |
 
 ## Modules
 
@@ -39,7 +39,7 @@
 | [aws_lb.service_lb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/lb) | data source |
 | [aws_lb_listener.secondary_lb_listener](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/lb_listener) | data source |
 | [aws_lb_listener.service_lb_listener](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/lb_listener) | data source |
-| [aws_opensearch_domain.alphabetical](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/opensearch_domain) | data source |
+| [aws_opensearch_domain.opensearch](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/opensearch_domain) | data source |
 | [aws_ssm_parameter.global_secret](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssm_parameter) | data source |
 | [aws_ssm_parameter.secret](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssm_parameter) | data source |
 | [aws_ssm_parameters_by_path.global_secrets](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssm_parameters_by_path) | data source |
@@ -70,7 +70,7 @@
 | <a name="input_max_task_count"></a> [max\_task\_count](#input\_max\_task\_count) | The maximum number of tasks for this service. | `number` | `3` | no |
 | <a name="input_min_task_count"></a> [min\_task\_count](#input\_min\_task\_count) | The minimum number of tasks for this service. | `number` | `1` | no |
 | <a name="input_multilb_cloudwatch_alarms_enabled"></a> [multilb\_cloudwatch\_alarms\_enabled](#input\_multilb\_cloudwatch\_alarms\_enabled) | Whether to create a standard set of cloudwatch alarms for the service in multilb setup.  Requires an SNS topic to have already been created for the stack. | `bool` | `true` | no |
-| <a name="input_opensearch_domain_name"></a> [opensearch\_domain\_name](#input\_opensearch\_domain\_name) | The names of the OpenSearch domains to which the ECS tasks need access. | `string` | n/a | yes |
+| <a name="input_opensearch_domain_names"></a> [opensearch\_domain\_names](#input\_opensearch\_domain\_names) | The names of the OpenSearch domains to which the ECS tasks need access. | `list(string)` | <pre>[<br/>  "alphabetical-search"<br/>]</pre> | no |
 | <a name="input_required_cpus"></a> [required\_cpus](#input\_required\_cpus) | The required cpu resource for this service. 1024 here is 1 vCPU | `number` | `256` | no |
 | <a name="input_required_memory"></a> [required\_memory](#input\_required\_memory) | The required memory for this service | `number` | `512` | no |
 | <a name="input_service_autoscale_enabled"></a> [service\_autoscale\_enabled](#input\_service\_autoscale\_enabled) | Whether to enable service autoscaling, including scheduled autoscaling | `bool` | `true` | no |
