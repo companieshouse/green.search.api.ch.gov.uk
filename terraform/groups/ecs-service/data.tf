@@ -76,8 +76,9 @@ data "vault_generic_secret" "shared_s3" {
   path = "aws-accounts/shared-services/s3"
 }
 
-data "aws_opensearch_domain" "alphabetical" {
-  domain_name = var.opensearch_domain_name
+data "aws_opensearch_domain" "opensearch" {
+  for_each    = toset(var.opensearch_domain_names)
+  domain_name = "${var.environment}-${each.value}"
 }
 
 data "aws_iam_policy_document" "task_assume" {
@@ -97,7 +98,7 @@ data "aws_iam_policy_document" "task_policy" {
   statement {
     sid       = "AllowOpenSearchAccess"
     effect    = "Allow"
-    actions   = ["es:ESHttpGet", "es:ESHttpPost", "es:ESHttpHead"]
-    resources = ["${data.aws_opensearch_domain.alphabetical.arn}/*"]
+    actions   = ["es:ESHttpGet", "es:ESHttpPost", "es:ESHttpHead", "es:ESHttpPut", "es:ESHttpDelete"]
+    resources = [for domain in data.aws_opensearch_domain.opensearch : "${domain.arn}/*"]
   }
 }

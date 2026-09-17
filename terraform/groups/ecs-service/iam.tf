@@ -3,24 +3,24 @@ resource "aws_iam_role" "task_role" {
   path               = "/"
   assume_role_policy = data.aws_iam_policy_document.task_assume.json
 
-  tags = {
-    Name               = "${var.environment}-${local.service_name}-task-role"
-    Environment        = var.environment
-    ECSClusterName     = "${local.name_prefix}-cluster"
-    ManagedByTerraform = "true"
-  }
+  tags = merge(
+    local.default_tags,
+    {
+      Name = "${var.environment}-${local.service_name}-task-role"
+    }
+  )
 }
 
 resource "aws_iam_policy" "task_policy" {
   name   = "${var.environment}-${local.service_name}-task-policy"
   policy = data.aws_iam_policy_document.task_policy.json
 
-  tags = {
-    Name               = "${var.environment}-${local.service_name}-task-policy"
-    Environment        = var.environment
-    ECSClusterName     = "${local.name_prefix}-cluster"
-    ManagedByTerraform = "true"
-  }
+  tags = merge(
+    local.default_tags,
+    {
+      Name = "${var.environment}-${local.service_name}-task-policy"
+    }
+  )
 }
 
 resource "aws_iam_role_policy_attachment" "task_policy_attachment" {

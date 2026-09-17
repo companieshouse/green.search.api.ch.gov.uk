@@ -146,7 +146,8 @@ variable "eric_version" {
   description = "The version of the eric container to run."
 }
 
-variable "opensearch_domain_name" {
-  type        = string
+variable "opensearch_domain_names" {
+  type        = list(string)
+  default     = ["alphabetical-search"]
   description = "The names of the OpenSearch domains to which the ECS tasks need access."
 }

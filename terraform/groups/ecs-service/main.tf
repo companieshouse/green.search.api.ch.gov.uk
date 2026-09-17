@@ -93,10 +93,8 @@ module "ecs-service" {
   eric_environment_filename = local.eric_environment_filename
   eric_secrets              = local.eric_secrets
 
-  default_tags = merge(
-    module.iac_tags.tags,
-    module.owner_tags.tags,
-  )
+  default_tags = local.default_tags
+
 
 }
 
