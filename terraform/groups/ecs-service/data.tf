@@ -78,6 +78,7 @@ data "vault_generic_secret" "shared_s3" {
 
 data "aws_opensearch_domain" "opensearch" {
   for_each    = toset(var.opensearch_domain_names)
+  
   domain_name = "${var.environment}-${each.value}"
 }
 

@@ -80,12 +80,7 @@ locals {
 
   default_tags = merge(
     module.iac_tags.tags,
-    module.owner_tags.tags,
-
-    {
-      Environment        = var.environment
-      ECSClusterName     = "${local.name_prefix}-cluster"
-      ManagedByTerraform = "true"
-    }
+    module.owner_tags.tags
   )
 }
+ 
