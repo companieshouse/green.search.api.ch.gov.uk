@@ -1,10 +1,14 @@
 package uk.gov.companieshouse.search.api.config;
 
+import org.apache.hc.client5.http.impl.async.HttpAsyncClientBuilder;
+import org.apache.hc.core5.http.HttpHost;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.transport.OpenSearchTransport;
 import org.opensearch.client.transport.aws.AwsSdk2Transport;
 import org.opensearch.client.transport.aws.AwsSdk2TransportOptions;
+import org.opensearch.client.transport.httpclient5.ApacheHttpClient5Transport;
+import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
@@ -32,28 +36,26 @@ public class OpenSearchConfig {
         this.environmentReader = environmentReader;
     }
 
-    private static final String ALPHABETICAL_SEARCH_URL = "ALPHABETICAL_SEARCH_URL";
+    private static final String ALPHABETICAL_SEARCH_URL_ENV = "ALPHABETICAL_SEARCH_URL";
 
     // IAM action/service name prefix used by Amazon OpenSearch Service for SigV4 signing (e.g. es:ESHttpPost)
     private static final String OPENSEARCH_SIGNING_SERVICE_NAME = "es";
 
+    // Environment variable used to switch between a local unsigned OpenSearch client and an
+    // AWS SigV4-signed client.
+    private static final String USE_AWS_SIGV4 = "USE_AWS_SIGV4";
+
     @Bean
     public OpenSearchClient alphabeticalSearchRestClient() {
-        return createOpenSearchClient(ALPHABETICAL_SEARCH_URL);
+        boolean useAwsSigV4 = Boolean.TRUE.equals(environmentReader.getOptionalBoolean(USE_AWS_SIGV4));
+
+        return useAwsSigV4
+                ? createSigV4OpenSearchClient()
+                : createUnsignedOpenSearchClient();
     }
 
-    public OpenSearchClient createOpenSearchClient(String url) {
-        URL endpoint;
-
-        try {
-            String rawUrl = environmentReader.getMandatoryString(url);
-            URI uri = new URI(rawUrl);
-            endpoint = uri.toURL();
-        } catch (URISyntaxException | MalformedURLException e) {
-            throw new EndpointException(
-                    url + " environment variable is malformed; expected format is <protocol>://<host>[:port]"
-            );
-        }
+    private OpenSearchClient createSigV4OpenSearchClient() {
+        URL endpoint = readEndpoint();
 
         SdkHttpClient httpClient = ApacheHttpClient.builder().build();
         AwsCredentialsProvider credentialsProvider = DefaultCredentialsProvider.builder().build();
@@ -73,5 +75,33 @@ public class OpenSearchConfig {
         );
 
         return new OpenSearchClient(transport);
+    }
+
+    private OpenSearchClient createUnsignedOpenSearchClient() {
+        URL endpoint = readEndpoint();
+
+        HttpHost httpHost = new HttpHost(endpoint.getProtocol(), endpoint.getHost(), endpoint.getPort());
+
+        ApacheHttpClient5Transport transport = ApacheHttpClient5TransportBuilder
+                .builder(httpHost)
+                .setMapper(new JacksonJsonpMapper())
+                .setHttpClientConfigCallback(
+                        HttpAsyncClientBuilder::disableContentCompression
+                )
+                .build();
+
+        return new OpenSearchClient(transport);
+    }
+
+    private URL readEndpoint() {
+        try {
+            String rawUrl = environmentReader.getMandatoryString(ALPHABETICAL_SEARCH_URL_ENV);
+            URI uri = new URI(rawUrl);
+            return uri.toURL();
+        } catch (URISyntaxException | MalformedURLException e) {
+            throw new EndpointException(
+                    ALPHABETICAL_SEARCH_URL_ENV + " environment variable is malformed; expected format is <protocol>://<host>[:port]"
+            );
+        }
     }
 }
