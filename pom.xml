@@ -42,7 +42,8 @@
 		</sonar.coverage.jacoco.xmlReportPaths>
 		<sonar.coverage.exclusions>
 			**/model/**,
-			**/config/**
+			**/config/**,
+			**/logging/**
 		</sonar.coverage.exclusions>
 	</properties>
 
