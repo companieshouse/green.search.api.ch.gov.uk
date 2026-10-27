@@ -30,6 +30,8 @@
 		<tomcat.version>11.0.27</tomcat.version>
 		<maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
 		<start-class>uk.gov.companieshouse.search.api.SearchApiApplication</start-class>
+		<opentelemetry.version>2.33.0</opentelemetry.version>
+		<opentelemetry.logback.appender.version>2.33.0-alpha</opentelemetry.logback.appender.version>
 
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.sources>src/main</sonar.sources>
@@ -40,7 +42,8 @@
 		</sonar.coverage.jacoco.xmlReportPaths>
 		<sonar.coverage.exclusions>
 			**/model/**,
-			**/config/**
+			**/config/**,
+			**/logging/**
 		</sonar.coverage.exclusions>
 	</properties>
 
@@ -57,6 +60,13 @@
 				<groupId>software.amazon.awssdk</groupId>
 				<artifactId>bom</artifactId>
 				<version>${aws-sdk-java.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.opentelemetry.instrumentation</groupId>
+				<artifactId>opentelemetry-instrumentation-bom</artifactId>
+				<version>${opentelemetry.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -129,6 +139,16 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-opentelemetry</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry.instrumentation</groupId>
+			<artifactId>opentelemetry-logback-appender-1.0</artifactId>
+			<version>${opentelemetry.logback.appender.version}</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
