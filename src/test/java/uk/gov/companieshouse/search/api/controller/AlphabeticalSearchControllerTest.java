@@ -105,6 +105,7 @@ class AlphabeticalSearchControllerTest {
                 .thenReturn(ResponseEntity.ok().contentType(APPLICATION_JSON).body(responseObject));
 
         mockMvc.perform(put("/alphabetical-search/companies/12345678")
+                        .header("ERIC-Identity-Type", "key").header("ERIC-Authorised-Key-Roles", "*")
                         .contentType(APPLICATION_JSON)
                         .content(asJsonString(company)))
                 .andExpect(status().isOk());
@@ -124,6 +125,7 @@ class AlphabeticalSearchControllerTest {
                 .thenReturn(ResponseEntity.ok().contentType(APPLICATION_JSON).body(responseObject));
 
         MvcResult result = mockMvc.perform(put("/alphabetical-search/companies/87654321")
+                        .header("ERIC-Identity-Type", "key").header("ERIC-Authorised-Key-Roles", "*")
                         .contentType(APPLICATION_JSON)
                         .content(asJsonString(company)))
                 .andExpect(status().isOk()).andReturn();
@@ -148,7 +150,8 @@ class AlphabeticalSearchControllerTest {
         when(apiToResponseMapper.map(any()))
                 .thenReturn(ResponseEntity.ok().contentType(APPLICATION_JSON).body(responseObject));
 
-        mockMvc.perform(delete("/alphabetical-search/companies/{company_number}", companyNumber))
+        mockMvc.perform(delete("/alphabetical-search/companies/{company_number}", companyNumber)
+                        .header("ERIC-Identity-Type", "key").header("ERIC-Authorised-Key-Roles", "*"))
                 .andExpect(status().isOk());
 
         verify(alphabeticalSearchDeleteService, Mockito.times(1)).deleteCompany(companyNumber);
@@ -169,7 +172,8 @@ class AlphabeticalSearchControllerTest {
         when(apiToResponseMapper.map(any()))
                 .thenReturn(ResponseEntity.ok().contentType(APPLICATION_JSON).body(responseObject));
 
-        MvcResult result = mockMvc.perform(delete("/alphabetical-search/companies/{company_number}", companyNumber))
+        MvcResult result = mockMvc.perform(delete("/alphabetical-search/companies/{company_number}", companyNumber)
+                        .header("ERIC-Identity-Type", "key").header("ERIC-Authorised-Key-Roles", "*"))
                 .andExpect(status().isOk()).andReturn();
 
         assertTrue(result.getResponse().getContentAsString().contains(ResponseStatus.DELETE_NOT_FOUND.name()));
