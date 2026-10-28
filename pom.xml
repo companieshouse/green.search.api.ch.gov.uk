@@ -17,7 +17,7 @@
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<spring-boot-dependencies.version>4.1.1</spring-boot-dependencies.version>
-		<structured-logging.version>3.0.57</structured-logging.version>
+		<structured-logging.version>4.0.6</structured-logging.version>
 		<environment-reader-library.version>3.0.5</environment-reader-library.version>
 		<api-sdk-java.version>7.0.5</api-sdk-java.version>
 		<opensearch-java-client.version>3.10.0</opensearch-java-client.version>
