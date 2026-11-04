@@ -145,7 +145,6 @@
         <dependency>
             <groupId>io.opentelemetry.instrumentation</groupId>
             <artifactId>opentelemetry-logback-appender-1.0</artifactId>
-            <version>${opentelemetry.logback.appender.version}</version>
             <scope>compile</scope>
         </dependency>
 
