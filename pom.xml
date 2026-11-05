@@ -57,6 +57,11 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-api-incubator</artifactId>
+                <version>${opentelemetry-bom.version}-alpha</version>
+            </dependency>
+            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
