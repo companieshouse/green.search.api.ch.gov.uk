@@ -19,8 +19,10 @@ class OpenTelemetryHttpObservationConfigTest {
     void conventionEmitsOpenTelemetryHttpAttributes() {
         MockHttpServletResponse response = new MockHttpServletResponse();
         response.setStatus(200);
-        ServerRequestObservationContext context = new ServerRequestObservationContext(
-                new MockHttpServletRequest("GET", "/green/alphabetical-search/companies"), response);
+        MockHttpServletRequest request =
+                new MockHttpServletRequest("GET", "/green/alphabetical-search/companies");
+        request.setQueryString("q=acme&size=5");
+        ServerRequestObservationContext context = new ServerRequestObservationContext(request, response);
         context.setPathPattern("/alphabetical-search/companies");
 
         KeyValues keyValues = convention.getLowCardinalityKeyValues(context);
@@ -28,7 +30,7 @@ class OpenTelemetryHttpObservationConfigTest {
         assertEquals("GET", value(keyValues, "http.request.method"));
         assertEquals("200", value(keyValues, "http.response.status_code"));
         assertEquals("/alphabetical-search/companies", value(keyValues, "http.route"));
-        assertEquals("http://localhost/green/alphabetical-search/companies",
+        assertEquals("http://localhost/green/alphabetical-search/companies?q=acme&size=5",
                 value(convention.getHighCardinalityKeyValues(context), "url.full"));
     }
 
