@@ -27,8 +27,10 @@ public class OpenTelemetryHttpObservationConfig {
         public KeyValues getHighCardinalityKeyValues(ServerRequestObservationContext context) {
             HttpServletRequest request = context.getCarrier();
             KeyValues keyValues = super.getHighCardinalityKeyValues(context);
-            StringBuffer url = request.getRequestURL();
-            return url == null ? keyValues : keyValues.and(KeyValue.of("url.full", url.toString()));
+            if (request == null || request.getRequestURL() == null) {
+                return keyValues;
+            }
+            return keyValues.and(KeyValue.of("url.full", request.getRequestURL().toString()));
         }
     }
 }
