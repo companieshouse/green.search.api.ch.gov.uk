@@ -30,7 +30,9 @@ public class OpenTelemetryHttpObservationConfig {
             if (request == null || request.getRequestURL() == null) {
                 return keyValues;
             }
-            return keyValues.and(KeyValue.of("url.full", request.getRequestURL().toString()));
+            String url = request.getRequestURL().toString();
+            String query = request.getQueryString();
+            return keyValues.and(KeyValue.of("url.full", query == null ? url : url + "?" + query));
         }
     }
 }
