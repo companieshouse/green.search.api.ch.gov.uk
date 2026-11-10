@@ -28,7 +28,7 @@
         <start-class>uk.gov.companieshouse.search.api.SearchApiApplication</start-class>
         <opentelemetry.version>2.31.1</opentelemetry.version>
         <opentelemetry.logback.appender.version>2.31.1-alpha</opentelemetry.logback.appender.version>
-        <ch-dependency-bom.version>0.1.26</ch-dependency-bom.version>
+        <ch-dependency-bom.version>0.1.36</ch-dependency-bom.version>
 
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.sources>src/main</sonar.sources>

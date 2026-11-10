@@ -1,8 +1,12 @@
 package uk.gov.companieshouse.search.api.config;
 
+import io.micrometer.common.KeyValue;
+import io.micrometer.common.KeyValues;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.observation.OpenTelemetryServerRequestObservationConvention;
+import org.springframework.http.server.observation.ServerRequestObservationContext;
 import org.springframework.http.server.observation.ServerRequestObservationConvention;
 
 @Configuration
@@ -13,6 +17,22 @@ public class OpenTelemetryHttpObservationConfig {
     // which X-Ray does not map.
     @Bean
     ServerRequestObservationConvention serverRequestObservationConvention() {
-        return new OpenTelemetryServerRequestObservationConvention();
+        return new UrlAwareConvention();
+    }
+
+    // The standard convention only emits url.path and url.scheme, so X-Ray cannot build the URL.
+    static class UrlAwareConvention extends OpenTelemetryServerRequestObservationConvention {
+
+        @Override
+        public KeyValues getHighCardinalityKeyValues(ServerRequestObservationContext context) {
+            HttpServletRequest request = context.getCarrier();
+            KeyValues keyValues = super.getHighCardinalityKeyValues(context);
+            if (request == null || request.getRequestURL() == null) {
+                return keyValues;
+            }
+            String url = request.getRequestURL().toString();
+            String query = request.getQueryString();
+            return keyValues.and(KeyValue.of("url.full", query == null ? url : url + "?" + query));
+        }
     }
 }
