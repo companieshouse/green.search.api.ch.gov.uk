@@ -50,7 +50,7 @@ public class AlphabeticalSearchIndexService implements SearchIndexService {
             searchResults = searchRequestService.getAlphabeticalSearchResults(corporateName, searchBefore, searchAfter,
                     size, requestId);
         } catch (SearchException e) {
-            getLogger().error("SearchException when searching for company", logMap);
+            getLogger().error("SearchException when searching for company", e, logMap);
             return new ResponseObject<>(ResponseStatus.SEARCH_ERROR, null);
         }
 

@@ -114,8 +114,8 @@ public class AlphabeticalSearchRequestService implements SearchRequestService<Co
                 }
             }
         } catch (IOException e) {
-            getLogger().error("Failed to map top hit search result to company object during alphabetical search", e, logMap);
-            throw new SearchException("Error occurred mapping the top hit search result to a company object", e);
+            getLogger().error("OpenSearch transport failure during alphabetical search", e, logMap);
+            throw new SearchException("OpenSearch request failed during alphabetical search", e);
         }
         return new SearchResults<>("", topHitCompany, results, TOP_LEVEL_ALPHABETICAL_KIND);
     }

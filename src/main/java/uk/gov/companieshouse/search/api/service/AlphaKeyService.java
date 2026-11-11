@@ -8,15 +8,16 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.companieshouse.environment.EnvironmentReader;
 import uk.gov.companieshouse.logging.util.DataMap;
+import uk.gov.companieshouse.search.api.exception.AlphaKeyServiceException;
 import uk.gov.companieshouse.search.api.logging.LoggingUtils;
 import uk.gov.companieshouse.search.api.model.response.AlphaKeyResponse;
 
 @Service
 public class AlphaKeyService {
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    private EnvironmentReader environmentReader;
+    private final EnvironmentReader environmentReader;
 
     private static final String ALPHAKEY_SERVICE_URL = "ALPHAKEY_SERVICE_URL";
 
@@ -44,8 +45,8 @@ public class AlphaKeyService {
         try {
             return restTemplate.getForObject(uri, AlphaKeyResponse.class);
         } catch (RestClientException e) {
-            LoggingUtils.getLogger().error("Error occurred during api call to alphakey service", logMap);
+            LoggingUtils.getLogger().error("Error occurred during api call to alphakey service", e, logMap);
+            throw new AlphaKeyServiceException("Error occurred during api call to alphakey service", e);
         }
-        return null;
     }
 }
