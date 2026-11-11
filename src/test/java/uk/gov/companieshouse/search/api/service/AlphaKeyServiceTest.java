@@ -2,7 +2,7 @@ package uk.gov.companieshouse.search.api.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -20,6 +20,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.companieshouse.environment.EnvironmentReader;
+import uk.gov.companieshouse.search.api.exception.AlphaKeyServiceException;
 import uk.gov.companieshouse.search.api.model.response.AlphaKeyResponse;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,8 +62,8 @@ class AlphaKeyServiceTest {
     }
 
     @Test
-    @DisplayName("Test alpha key response not returned due to rest client exception")
-    void testNoResponseReturnedDueToException() {
+    @DisplayName("Test exception thrown due to rest client exception")
+    void testExceptionThrownDueToRestClientException() {
         when(mockEnvironmentReader.getMandatoryString(anyString())).thenReturn(URL);
         when(mockRestTemplate.getForObject(any(), eq(AlphaKeyResponse.class)))
                 .thenThrow(new RestClientException("error"));
@@ -73,8 +74,8 @@ class AlphaKeyServiceTest {
                 .encode()
                 .toUri();
 
-        AlphaKeyResponse alphaKeyResponse = alphaKeyService.getAlphaKeyForCorporateName(CORPORATE_NAME);
-        assertNull(alphaKeyResponse);
+        assertThrows(AlphaKeyServiceException.class,
+                () -> alphaKeyService.getAlphaKeyForCorporateName(CORPORATE_NAME));
         verify(mockRestTemplate).getForObject(uri, AlphaKeyResponse.class);
     }
 
