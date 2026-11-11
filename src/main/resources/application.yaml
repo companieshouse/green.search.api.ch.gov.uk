@@ -8,6 +8,9 @@ server:
   servlet:
     context-path: /green
 management:
+  tracing:
+    sampling:
+      probability: 1.0
   endpoints:
     enabled-by-default: false
     web:
