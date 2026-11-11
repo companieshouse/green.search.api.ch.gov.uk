@@ -1,8 +1,7 @@
 package uk.gov.companieshouse.search.api.exception;
 
 /**
- * Thrown when the alphakey service cannot be called successfully. Unchecked so that it is
- * translated by {@link GlobalExceptionHandler}.
+ * Thrown when the alphakey service cannot be called.
  */
 public class AlphaKeyServiceException extends RuntimeException {
 
