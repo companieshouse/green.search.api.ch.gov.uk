@@ -9,7 +9,6 @@ import io.opentelemetry.sdk.trace.data.DelegatingSpanData;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.export.SpanExporter;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * Micrometer's OpenTelemetry bridge writes every observation key as a string attribute, so the
@@ -28,7 +27,7 @@ public class HttpStatusCodeSpanExporter implements SpanExporter {
 
     @Override
     public CompletableResultCode export(Collection<SpanData> spans) {
-        return delegate.export(spans.stream().map(this::withNumericStatusCode).collect(Collectors.toList()));
+        return delegate.export(spans.stream().map(this::withNumericStatusCode).toList());
     }
 
     @Override
