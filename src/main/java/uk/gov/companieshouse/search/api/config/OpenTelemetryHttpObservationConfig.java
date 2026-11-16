@@ -37,7 +37,6 @@ public class OpenTelemetryHttpObservationConfig {
         };
     }
 
-
     // The standard convention only emits url.path and url.scheme, so X-Ray cannot build the URL.
     static class UrlAwareConvention extends OpenTelemetryServerRequestObservationConvention {
 
