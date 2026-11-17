@@ -2,12 +2,15 @@ package uk.gov.companieshouse.search.api.config;
 
 import io.micrometer.common.KeyValue;
 import io.micrometer.common.KeyValues;
+import io.opentelemetry.sdk.trace.export.SpanExporter;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.observation.OpenTelemetryServerRequestObservationConvention;
 import org.springframework.http.server.observation.ServerRequestObservationContext;
 import org.springframework.http.server.observation.ServerRequestObservationConvention;
+import uk.gov.companieshouse.search.api.logging.HttpStatusCodeSpanExporter;
 
 @Configuration
 public class OpenTelemetryHttpObservationConfig {
@@ -18,6 +21,20 @@ public class OpenTelemetryHttpObservationConfig {
     @Bean
     ServerRequestObservationConvention serverRequestObservationConvention() {
         return new UrlAwareConvention();
+    }
+
+    @Bean
+    static BeanPostProcessor httpStatusCodeSpanExporterBeanPostProcessor() {
+        return new BeanPostProcessor() {
+            @Override
+            public Object postProcessAfterInitialization(Object bean, String beanName) {
+                if (bean instanceof SpanExporter exporter
+                        && !(exporter instanceof HttpStatusCodeSpanExporter)) {
+                    return new HttpStatusCodeSpanExporter(exporter);
+                }
+                return bean;
+            }
+        };
     }
 
     // The standard convention only emits url.path and url.scheme, so X-Ray cannot build the URL.
