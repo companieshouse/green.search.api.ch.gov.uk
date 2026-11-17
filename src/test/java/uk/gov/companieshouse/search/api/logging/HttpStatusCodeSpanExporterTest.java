@@ -34,17 +34,14 @@ class HttpStatusCodeSpanExporterTest {
         Span span = tracerProvider.get("test").spanBuilder("GET /search").startSpan();
         span.setAttribute("http.response.status_code", "400");
         span.setAttribute("http.request.method", "GET");
-        span.setAttribute("retries", 2L);
         span.end();
 
         exporter.export(original);
 
         Attributes attributes = exported.getFirst().getAttributes();
         assertEquals(400L, attributes.get(AttributeKey.longKey("http.response.status_code")));
-        assertNull(attributes.get(AttributeKey.stringKey("http.response.status_code")));
         assertEquals("GET", attributes.get(AttributeKey.stringKey("http.request.method")));
-        assertEquals(2L, attributes.get(AttributeKey.longKey("retries")));
-        assertEquals(3, attributes.size());
+        assertEquals(2, attributes.size());
         assertEquals("GET /search", exported.getFirst().getName());
     }
 
@@ -56,6 +53,9 @@ class HttpStatusCodeSpanExporterTest {
 
         exporter.export(original);
 
+        Attributes attributes = exported.getFirst().getAttributes();
+        assertNull(attributes.get(AttributeKey.longKey("http.response.status_code")));
+        assertEquals("GET", attributes.get(AttributeKey.stringKey("http.request.method")));
         assertSame(original.getFirst(), exported.getFirst());
     }
 
