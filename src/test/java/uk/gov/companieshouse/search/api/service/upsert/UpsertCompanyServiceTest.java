@@ -16,9 +16,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opensearch.client.opensearch.core.IndexRequest;
 import org.opensearch.client.opensearch.core.UpdateRequest;
+import org.opensearch.client.opensearch.core.UpdateResponse;
 import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
+import uk.gov.companieshouse.search.api.model.response.AlphaKeyResponse;
 import uk.gov.companieshouse.search.api.model.response.ResponseObject;
+import uk.gov.companieshouse.search.api.service.AlphaKeyService;
+import uk.gov.companieshouse.search.api.service.rest.AdvancedSearchRestClientService;
 import uk.gov.companieshouse.search.api.service.rest.AlphabeticalSearchRestClientService;
+import uk.gov.companieshouse.search.api.service.upsert.advanced.AdvancedUpsertRequestService;
 import uk.gov.companieshouse.search.api.service.upsert.alphabetical.AlphabeticalUpsertRequestService;
 import uk.gov.companieshouse.search.api.util.ConfiguredIndexNamesProvider;
 
@@ -29,6 +34,15 @@ class UpsertCompanyServiceTest {
 
     @Mock
     private AlphabeticalUpsertRequestService mockAlphabeticalUpsertRequestService;
+
+    @Mock
+    private AdvancedSearchRestClientService mockAdvancedSearchRestClientService;
+
+    @Mock
+    private AdvancedUpsertRequestService mockAdvancedUpsertRequestService;
+
+    @Mock
+    private AlphaKeyService mockAlphaKeyService;
 
     @Mock
     private UpdateRequest<Object, Map<String, Object>> updateRequest;
@@ -108,6 +122,26 @@ class UpsertCompanyServiceTest {
 
         assertNotNull(responseObject);
         assertEquals(UPDATE_REQUEST_ERROR, responseObject.getStatus());
+    }
+
+    @Test
+    @DisplayName("Test advanced upsert is successful")
+    void testAdvancedUpsertIsSuccessful() throws Exception {
+        CompanyProfileApi company = createCompany();
+        AlphaKeyResponse alphaKeyResponse = new AlphaKeyResponse();
+        alphaKeyResponse.setOrderedAlphaKey("companyname");
+        alphaKeyResponse.setSameAsAlphaKey("companyname");
+        when(indices.advanced()).thenReturn("advanced-index");
+        when(mockAlphaKeyService.getAlphaKeyForCorporateName(company.getCompanyName()))
+                .thenReturn(alphaKeyResponse);
+        when(mockAdvancedUpsertRequestService.createUpdateRequest(company, "companyname", "companyname"))
+                .thenReturn(updateRequest);
+        when(mockAdvancedSearchRestClientService.upsert(updateRequest))
+                .thenReturn(org.mockito.Mockito.mock(UpdateResponse.class));
+
+        ResponseObject<?> response = upsertCompanyService.upsertAdvanced(company);
+
+        assertEquals(DOCUMENT_UPSERTED, response.getStatus());
     }
 
 
