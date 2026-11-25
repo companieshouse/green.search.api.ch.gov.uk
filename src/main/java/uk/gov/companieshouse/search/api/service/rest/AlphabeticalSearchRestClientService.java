@@ -7,6 +7,7 @@ import org.opensearch.client.opensearch.core.SearchRequest;
 import org.opensearch.client.opensearch.core.SearchResponse;
 import org.opensearch.client.opensearch.core.UpdateRequest;
 import org.opensearch.client.opensearch.core.UpdateResponse;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -17,7 +18,8 @@ public class AlphabeticalSearchRestClientService implements RestClientService {
 
     private final OpenSearchClient alphabeticalSearchClient;
 
-    public AlphabeticalSearchRestClientService(OpenSearchClient alphabeticalSearchClient) {
+    public AlphabeticalSearchRestClientService(
+            @Qualifier("alphabeticalSearchRestClient") OpenSearchClient alphabeticalSearchClient) {
         this.alphabeticalSearchClient = alphabeticalSearchClient;
     }
 

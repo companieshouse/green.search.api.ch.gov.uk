@@ -37,6 +37,7 @@ public class OpenSearchConfig {
     }
 
     private static final String ALPHABETICAL_SEARCH_URL_ENV = "ALPHABETICAL_SEARCH_URL";
+    private static final String ADVANCED_SEARCH_URL_ENV = "ADVANCED_SEARCH_URL";
 
     // IAM action/service name prefix used by Amazon OpenSearch Service for SigV4 signing (e.g. es:ESHttpPost)
     private static final String OPENSEARCH_SIGNING_SERVICE_NAME = "es";
@@ -50,12 +51,21 @@ public class OpenSearchConfig {
         boolean useAwsSigV4 = Boolean.TRUE.equals(environmentReader.getOptionalBoolean(USE_AWS_SIGV4));
 
         return useAwsSigV4
-                ? createSigV4OpenSearchClient()
-                : createUnsignedOpenSearchClient();
+                ? createSigV4OpenSearchClient(ALPHABETICAL_SEARCH_URL_ENV)
+                : createUnsignedOpenSearchClient(ALPHABETICAL_SEARCH_URL_ENV);
     }
 
-    private OpenSearchClient createSigV4OpenSearchClient() {
-        URL endpoint = readEndpoint();
+    @Bean
+    public OpenSearchClient advancedSearchRestClient() {
+        boolean useAwsSigV4 = Boolean.TRUE.equals(environmentReader.getOptionalBoolean(USE_AWS_SIGV4));
+
+        return useAwsSigV4
+                ? createSigV4OpenSearchClient(ADVANCED_SEARCH_URL_ENV)
+                : createUnsignedOpenSearchClient(ADVANCED_SEARCH_URL_ENV);
+    }
+
+    private OpenSearchClient createSigV4OpenSearchClient(String endpointEnvironmentVariable) {
+        URL endpoint = readEndpoint(endpointEnvironmentVariable);
 
         SdkHttpClient httpClient = ApacheHttpClient.builder().build();
         AwsCredentialsProvider credentialsProvider = DefaultCredentialsProvider.builder().build();
@@ -77,8 +87,8 @@ public class OpenSearchConfig {
         return new OpenSearchClient(transport);
     }
 
-    private OpenSearchClient createUnsignedOpenSearchClient() {
-        URL endpoint = readEndpoint();
+    private OpenSearchClient createUnsignedOpenSearchClient(String endpointEnvironmentVariable) {
+        URL endpoint = readEndpoint(endpointEnvironmentVariable);
 
         HttpHost httpHost = new HttpHost(endpoint.getProtocol(), endpoint.getHost(), endpoint.getPort());
 
@@ -93,14 +103,14 @@ public class OpenSearchConfig {
         return new OpenSearchClient(transport);
     }
 
-    private URL readEndpoint() {
+    private URL readEndpoint(String endpointEnvironmentVariable) {
         try {
-            String rawUrl = environmentReader.getMandatoryString(ALPHABETICAL_SEARCH_URL_ENV);
+            String rawUrl = environmentReader.getMandatoryString(endpointEnvironmentVariable);
             URI uri = new URI(rawUrl);
             return uri.toURL();
         } catch (URISyntaxException | MalformedURLException e) {
             throw new EndpointException(
-                    ALPHABETICAL_SEARCH_URL_ENV + " environment variable is malformed; expected format is <protocol>://<host>[:port]"
+                    endpointEnvironmentVariable + " environment variable is malformed; expected format is <protocol>://<host>[:port]"
             );
         }
     }
